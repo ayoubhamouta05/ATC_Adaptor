@@ -1,0 +1,209 @@
+package com.youppix.atcadaptor.common
+
+import android.content.Context
+import android.content.res.Configuration
+import android.text.format.DateUtils
+import android.util.Patterns
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.EventNote
+import androidx.compose.material.icons.automirrored.outlined.EventNote
+import androidx.compose.material.icons.filled.Calculate
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Help
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.NotificationImportant
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.ShoppingBag
+import androidx.compose.material.icons.outlined.Calculate
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Help
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.NotificationImportant
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.QrCodeScanner
+import androidx.compose.material.icons.outlined.ShoppingBag
+import androidx.compose.ui.graphics.Color
+import com.youppix.atcadaptor.domain.model.bottomBar.BottomBar
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+import kotlin.random.Random
+
+object Constant {
+    const val APP_ENTRY = "appEntry"
+    const val APP_LANG = "appLang"
+
+
+    val mainActivityBottomBarItems = listOf(
+
+        BottomBar(
+            title = "Calculation",
+            selectedIcon = Icons.Filled.Calculate,
+            unselectedIcon = Icons.Outlined.Calculate,
+            screen = 0
+        ),
+        BottomBar(
+            title = "Alert",
+            selectedIcon = Icons.Filled.NotificationImportant,
+            unselectedIcon = Icons.Outlined.NotificationImportant,
+            screen = 1
+        ),
+        BottomBar(
+            title = "Home",
+            selectedIcon = Icons.Filled.Home,
+            unselectedIcon = Icons.Outlined.Home,
+            screen = 2
+        ),
+        BottomBar(
+            title = "Scanner",
+            selectedIcon = Icons.Filled.QrCodeScanner,
+            unselectedIcon = Icons.Outlined.QrCodeScanner,
+            screen = 3
+        ),
+        BottomBar(
+            title = "Support",
+            selectedIcon = Icons.Filled.Help,
+            unselectedIcon = Icons.Outlined.Help,
+            screen = 4
+        ),
+
+
+        )
+
+    fun checkUserName(name: String, context: Context): Resource<Boolean> {
+        val regex = "^[A-Za-z][A-Za-z0-9_]*( [A-Za-z0-9_]+)*$"
+        val p: Pattern = Pattern.compile(regex)
+        val trimName = name.trim()
+        val m: Matcher = p.matcher(name)
+        return when {
+            name.isBlank() || trimName.isEmpty() -> {
+                Resource.Error("context.getString(R.string.userNameEmptyErrorMsg)", false)
+            }
+
+            !m.matches() -> {
+                Resource.Error("context.getString(R.string.userNameWrongPatternErrorMsg)", false)
+            }
+
+            else -> {
+                Resource.Successful(true)
+            }
+        }
+    }
+
+    fun checkPhone(phone: String, context: Context): Resource<Boolean> {
+        val regex = "^(00213|\\+213|0)(5|6|7)[0-9]{8}$"
+        val p: Pattern = Pattern.compile(regex)
+        val trimPhone = phone.trim()
+        val m: Matcher = p.matcher(phone)
+        return when {
+            phone.isBlank() || trimPhone.isEmpty() -> {
+                Resource.Error("context.getString(R.string.phoneEmptyErrorMsg)", false)
+            }
+
+            !m.matches() -> {
+                Resource.Error("context.getString(R.string.phoneWrongPatternErrorMsg)", false)
+            }
+
+            else -> {
+                Resource.Successful(true)
+            }
+        }
+    }
+
+    fun checkEmail(email: String, context: Context): Resource<Boolean> {
+        val trimEmail = email.trim()
+
+        return when {
+            trimEmail.isBlank() || trimEmail.isEmpty() -> {
+                Resource.Error("context.getString(R.string.emailEmptyErrorMsg)", false)
+            }
+
+            !Patterns.EMAIL_ADDRESS.matcher(trimEmail).matches() -> {
+                Resource.Error("context.getString(R.string.emailWrongPatternErrorMsg)", false)
+            }
+
+            else -> {
+                Resource.Successful(true)
+            }
+        }
+    }
+
+    fun checkPassword(password: String, context: Context): Resource<Boolean> {
+        val trimPassword = password.trim()
+
+        return when {
+            trimPassword.isBlank() || trimPassword.isEmpty() -> {
+                Resource.Error("context.getString(R.string.passwordEmptyErrorMsg)", false)
+            }
+
+            trimPassword.length < 6 -> {
+                Resource.Error("context.getString(R.string.passwordWrongPatternErrorMsg)", false)
+            }
+
+            else -> {
+                Resource.Successful(true)
+            }
+        }
+    }
+
+    fun setLocal(lang: String, context: Context) {
+        val locale = Locale(lang)
+        Locale.setDefault(locale)
+        val config = Configuration()
+
+        config.setLocale(locale)
+        context.resources.updateConfiguration(
+            config,
+            context.resources.displayMetrics
+        )
+    }
+
+    fun formatDate(time : Long) :String{
+        val date = Date(time *1000)
+        val dateFormatted = SimpleDateFormat("dd/MM/yyyy HH:mm:ss" , Locale.US)
+            .format(date)
+        return dateFormatted
+    }
+
+    fun getRelativeTime(time: String): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
+
+        val date: Date = dateFormat.parse(time) ?: return "Invalid date"
+
+        val timestamp = date.time
+
+        val now = System.currentTimeMillis()
+
+        return DateUtils.getRelativeTimeSpanString(
+            timestamp,
+            now,
+            DateUtils.MINUTE_IN_MILLIS
+        ).toString().toEnglishNumbers()
+    }
+
+    fun Double.format(digits: Int) = "%.${digits}f".format(this)
+
+    private fun String.toEnglishNumbers(): String {
+        val arabicNumbers = arrayOf('٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩')
+        val englishNumbers = arrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
+
+        var result = this
+        for (i in arabicNumbers.indices) {
+            result = result.replace(arabicNumbers[i], englishNumbers[i])
+        }
+
+        return result
+    }
+
+    fun randomColor(mainBrightness: Int = 50): Color {
+        val random = Random.Default
+        val red = random.nextInt(mainBrightness, 256)
+        val green = random.nextInt(mainBrightness, 256)
+        val blue = random.nextInt(mainBrightness, 256)
+        return Color(red, green, blue)
+
+    }
+}

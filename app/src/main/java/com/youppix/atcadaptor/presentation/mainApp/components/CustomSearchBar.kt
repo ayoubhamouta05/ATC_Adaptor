@@ -2,6 +2,8 @@ package com.youppix.atcadaptor.presentation.mainApp.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -51,6 +54,7 @@ fun CustomSearchBar(
     onSearchClicked: () -> Unit = {},
     onTextChange: (String) -> Unit = {},
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
     Row(
         modifier = modifier
             .height(height)
@@ -62,9 +66,16 @@ fun CustomSearchBar(
         BasicTextField(
             modifier = Modifier
                 .weight(5f)
-                .padding(start = MediumPadding, end = SmallPadding),
+                .padding(start = MediumPadding, end = SmallPadding)
+                .focusable(isEnabled)
+                .clickable(interactionSource, indication = null) {
+                    if (isEnabled) onSearchClicked() else
+                        onBoxCLicked()
+                }
+            ,
             value = value,
             onValueChange = {
+                if (isEnabled)
                 onTextChange(it)
             },
             enabled = isEnabled,

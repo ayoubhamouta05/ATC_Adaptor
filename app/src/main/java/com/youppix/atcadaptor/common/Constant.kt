@@ -24,6 +24,8 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material.icons.outlined.ShoppingBag
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import com.youppix.atcadaptor.R
 import com.youppix.atcadaptor.domain.model.bottomBar.BottomBar
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -41,32 +43,32 @@ object Constant {
 
         BottomBar(
             title = "Calculation",
-            selectedIcon = Icons.Filled.Calculate,
-            unselectedIcon = Icons.Outlined.Calculate,
+            selectedIcon = R.drawable.ic_calculate,
+            unselectedIcon = R.drawable.ic_calculate,
             screen = 0
         ),
         BottomBar(
             title = "Alert",
-            selectedIcon = Icons.Filled.NotificationImportant,
-            unselectedIcon = Icons.Outlined.NotificationImportant,
+            selectedIcon = R.drawable.ic_alert_notification,
+            unselectedIcon = R.drawable.ic_alert_notification,
             screen = 1
         ),
         BottomBar(
             title = "Home",
-            selectedIcon = Icons.Filled.Home,
-            unselectedIcon = Icons.Outlined.Home,
+            selectedIcon = R.drawable.ic_home,
+            unselectedIcon = R.drawable.ic_home,
             screen = 2
         ),
         BottomBar(
             title = "Scanner",
-            selectedIcon = Icons.Filled.QrCodeScanner,
-            unselectedIcon = Icons.Outlined.QrCodeScanner,
+            selectedIcon = R.drawable.ic_qr_code,
+            unselectedIcon =R.drawable.ic_qr_code,
             screen = 3
         ),
         BottomBar(
             title = "Support",
-            selectedIcon = Icons.Filled.Help,
-            unselectedIcon = Icons.Outlined.Help,
+            selectedIcon = R.drawable.ic_support,
+            unselectedIcon = R.drawable.ic_support,
             screen = 4
         ),
 

@@ -30,6 +30,7 @@ class AuthService(private val client: HttpClient) {
         email: String,
         phone: String,
         password: String,
+        userType : Int
     ): Flow<Resource<StandardResponse>> = flow {
         try {
             emit(Resource.Loading())
@@ -39,13 +40,14 @@ class AuthService(private val client: HttpClient) {
                 val usersEmail: String,
                 val usersPassword: String,
                 val usersPhone: String,
+                val usersType : Int
             )
 
             val response = client.post(SIGNUP_URL) {
-                setBody(Data(name, email, password, phone))
+                setBody(Data(name, email, password, phone , userType))
             }
             val responseBody = response.body<StandardResponse>()
-            if (responseBody.status == StatusResponse.Failure.name) {
+            if (responseBody.status == StatusResponse.Failure.name.lowercase()) {
                 emit(Resource.Error(responseBody.message))
             } else {
                 emit(Resource.Successful(responseBody))
@@ -94,7 +96,7 @@ class AuthService(private val client: HttpClient) {
                 )
             }
             val responseBody = response.body<StandardResponse>()
-            if (responseBody.status == StatusResponse.Failure.name) {
+            if (responseBody.status == StatusResponse.Failure.name.lowercase()) {
                 emit(Resource.Error(responseBody.message))
             } else {
                 emit(Resource.Successful(responseBody))
@@ -178,7 +180,7 @@ class AuthService(private val client: HttpClient) {
             }
             val responseBody = response.body<StandardResponse>()
             when (responseBody.status) {
-                StatusResponse.Failure.name -> {
+                StatusResponse.Failure.name.lowercase() -> {
                     emit(Resource.Error(responseBody.message))
                 }
 
@@ -221,7 +223,7 @@ class AuthService(private val client: HttpClient) {
                 }
                 val responseBody = response.body<StandardResponse>()
                 when (responseBody.status) {
-                    StatusResponse.Failure.name -> {
+                    StatusResponse.Failure.name.lowercase() -> {
                         emit(Resource.Error(responseBody.message))
                     }
 

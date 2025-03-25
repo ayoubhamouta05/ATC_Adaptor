@@ -35,7 +35,7 @@ class DetailsService(private val client: HttpClient) {
                 setBody(Data(medicationName, patientId))
             }
             val responseBody = response.body<DetailsResponse>()
-            if (responseBody.status == StatusResponse.Failure.name) {
+            if (responseBody.status == StatusResponse.Failure.name.lowercase()) {
                 emit(Resource.Error(responseBody.message))
             } else {
                 emit(Resource.Successful(responseBody))

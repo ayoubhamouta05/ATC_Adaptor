@@ -13,4 +13,11 @@ sealed class HomeEvent {
     @Immutable
     data class UpdateUserType(val value: Int) : HomeEvent()
 
+    @Immutable
+    data object ToggleNeedToBeLoggedBottomSheet : HomeEvent()
+
+    @Immutable
+    data class SaveAppEntry(val value: String) : HomeEvent()
+
+
 }

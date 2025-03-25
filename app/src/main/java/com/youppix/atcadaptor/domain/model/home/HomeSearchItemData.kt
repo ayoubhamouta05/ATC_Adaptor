@@ -1,7 +1,9 @@
 package com.youppix.atcadaptor.domain.model.home
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 
+@Immutable
 @Serializable
 data class HomeSearchItemData(
     val auc: String?,

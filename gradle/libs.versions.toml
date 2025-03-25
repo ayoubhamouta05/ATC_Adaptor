@@ -26,6 +26,7 @@ ktorClientContentNegotiation = "2.3.12"
 ktorClientCore = "2.3.12"
 ktorSerializationKotlinxJson = "2.3.12"
 zxingAndroidEmbedded = "4.3.0"
+storage = "1.5.0"
 
 
 [libraries]
@@ -64,6 +65,7 @@ ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negoti
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClientCore" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorSerializationKotlinxJson" }
 zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
+androidx-storage = { group = "androidx.test.services", name = "storage", version.ref = "storage" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

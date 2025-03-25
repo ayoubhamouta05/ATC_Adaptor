@@ -14,6 +14,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.youppix.atcadaptor.common.Dimens
 import com.youppix.atcadaptor.domain.model.bottomBar.BottomBar
@@ -40,7 +41,7 @@ fun BottomBarItem(
                 interactionSource = interactionSource
             ) { onChangeNav(item.screen) }) {
         Icon(
-            imageVector = if (item.screen == currentScreen) item.selectedIcon else item.unselectedIcon,
+            painter = if (item.screen == currentScreen) painterResource( item.selectedIcon) else painterResource( item.unselectedIcon),
             contentDescription = item.title,
             tint = if (item.screen == currentScreen) MaterialTheme.colorScheme.primary else Color.Gray,
             modifier = Modifier.size(25.dp)

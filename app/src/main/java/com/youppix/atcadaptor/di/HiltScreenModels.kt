@@ -2,10 +2,13 @@ package com.youppix.atcadaptor.di
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.hilt.ScreenModelKey
+import com.youppix.atcadaptor.presentation.authentication.forgotPassword.ForgotPasswordViewModel
 import com.youppix.atcadaptor.presentation.authentication.login.LoginViewModel
+import com.youppix.atcadaptor.presentation.authentication.signup.SignUpViewModel
 import com.youppix.atcadaptor.presentation.mainApp.calculation.CalculationViewModel
 import com.youppix.atcadaptor.presentation.mainApp.details.DetailsViewModel
 import com.youppix.atcadaptor.presentation.mainApp.home.HomeViewModel
+import com.youppix.atcadaptor.presentation.mainApp.scanner.ScannerScreenViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -37,5 +40,18 @@ abstract class HiltScreenModels {
     @ScreenModelKey(CalculationViewModel::class)
     abstract fun bindHiltCalculationViewModel(calculationViewModel: CalculationViewModel): ScreenModel
 
+    @Binds
+    @IntoMap
+    @ScreenModelKey(ForgotPasswordViewModel::class)
+    abstract fun bindHiltForgotPasswordViewModel(forgotPasswordViewModel: ForgotPasswordViewModel): ScreenModel
 
+    @Binds
+    @IntoMap
+    @ScreenModelKey(SignUpViewModel::class)
+    abstract fun bindHiltSignUpViewModel(signUpViewModel: SignUpViewModel): ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(ScannerScreenViewModel::class)
+    abstract fun bindHiltScannerScreenViewModel(scannerScreenViewModel: ScannerScreenViewModel): ScreenModel
 }

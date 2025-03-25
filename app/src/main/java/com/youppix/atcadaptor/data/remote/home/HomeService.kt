@@ -37,7 +37,7 @@ class HomeService (private val client: HttpClient) {
             val jsonString = response.bodyAsText()
             Log.d("API_RESPONSE", jsonString)
             val responseBody = response.body<HomeSearchResponse>()
-            if (responseBody.status == StatusResponse.Failure.name) {
+            if (responseBody.status == StatusResponse.Failure.name.lowercase()) {
                 emit(Resource.Error(responseBody.message))
             } else {
                 emit(Resource.Successful(responseBody))

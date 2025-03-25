@@ -5,6 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.youppix.atcadaptor.common.Constant.APP_ENTRY
 import com.youppix.atcadaptor.common.Resource
 import com.youppix.atcadaptor.domain.useCases.home.HomeUseCases
 import kotlinx.coroutines.FlowPreview
@@ -45,6 +46,20 @@ class HomeViewModel @Inject constructor(
             is HomeEvent.Search -> {
                 screenModelScope.launch {
                     search(event.value , state.value.userType)
+                }
+            }
+
+            HomeEvent.ToggleNeedToBeLoggedBottomSheet -> {
+                _state.value = state.value.copy(
+                    needToBeLogged = !state.value.needToBeLogged
+                )
+            }
+
+            is HomeEvent.SaveAppEntry -> {
+                screenModelScope.launch {
+                    homeUseCases.saveAppEntry?.let {
+                        it(APP_ENTRY , "0")
+                    }
                 }
             }
         }

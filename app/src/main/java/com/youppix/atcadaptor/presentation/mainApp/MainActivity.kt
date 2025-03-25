@@ -3,6 +3,7 @@ package com.youppix.atcadaptor.presentation.mainApp
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
@@ -33,6 +34,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.hilt.navigation.compose.hiltViewModel
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.FadeTransition
+import com.youppix.atcadaptor.common.Constant
 import com.youppix.atcadaptor.common.Constant.APP_LANG
 import com.youppix.atcadaptor.common.Constant.mainActivityBottomBarItems
 import com.youppix.atcadaptor.common.Constant.setLocal
@@ -56,6 +58,7 @@ import java.util.Locale
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private var navigator: Navigator? = null
+    lateinit var viewModel : MainActivityViewModel
     private val currentLang by lazy {
         getSharedPreferences(APP_LANG, 0).getString(APP_LANG, Locale.getDefault().language)
             ?: Locale.getDefault().language
@@ -70,6 +73,8 @@ class MainActivity : ComponentActivity() {
 
 //        val userId = getSharedPreferences(Constant.APP_ENTRY, 0).getString("userId", "")
 //        val userType = getSharedPreferences(Constant.APP_ENTRY, 0).getString("userType", "")
+        val appEntry = getSharedPreferences(Constant.APP_ENTRY, 0).getString(Constant.APP_ENTRY, "")
+            Log.d("AppEntry", "onCreate Main: $appEntry")
 
 
         setContent {

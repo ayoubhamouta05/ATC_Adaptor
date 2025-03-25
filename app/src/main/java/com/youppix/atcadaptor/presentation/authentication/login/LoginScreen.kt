@@ -3,7 +3,6 @@ package com.youppix.atcadaptor.presentation.authentication.login
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -25,6 +25,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -38,13 +39,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -56,6 +57,10 @@ import com.youppix.atcadaptor.common.Dimens.ExtraSmallPadding
 import com.youppix.atcadaptor.common.Dimens.LargePadding
 import com.youppix.atcadaptor.common.Dimens.MediumPadding
 import com.youppix.atcadaptor.common.Dimens.SmallPadding
+import com.youppix.atcadaptor.presentation.authentication.forgotPassword.CheckEmailValidationScreen
+import com.youppix.atcadaptor.presentation.authentication.signup.ChooseUserTypeScreen
+import com.youppix.atcadaptor.presentation.authentication.signup.SignUpState
+import com.youppix.atcadaptor.presentation.authentication.verification.VerificationEmailSignUpScreen
 import com.youppix.atcadaptor.presentation.components.CustomCircularProgress
 import com.youppix.atcadaptor.presentation.components.CustomDialog
 import com.youppix.atcadaptor.presentation.components.CustomTextField
@@ -81,7 +86,7 @@ class LoginScreen : Screen {
                 loginSuccessful(viewModel, context)
                 viewModel.resetState()
             } else if (!loginState.loginError.isNullOrEmpty()) {
-                Toast.makeText(context, loginState.loginError, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, loginState.loginError, Toast.LENGTH_LONG).show()
                 viewModel.resetState()
             }
         }
@@ -96,8 +101,8 @@ class LoginScreen : Screen {
                         Text(
                             text = stringResource(id = R.string.signin),
                             textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.titleSmall.copy(fontSize = 24.sp),
-                            color = Color.Gray
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.primary
                         )
                     },
                     modifier = Modifier.background(MaterialTheme.colorScheme.primary)
@@ -114,33 +119,40 @@ class LoginScreen : Screen {
                 verticalArrangement = Arrangement.Center
             ) {
                 Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = stringResource(id = R.string.welcomeBack),
-                    style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Bold),
+
+                Icon(painterResource(R.drawable.atc_logo) , contentDescription = null ,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            top = innerPadding
-                                .calculateTopPadding()
-                                .plus(
-                                    LargePadding
-                                )
-                        ),
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = stringResource(id = R.string.signInBodyText),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            bottom = LargePadding,
-                            start = LargePadding,
-                            end = LargePadding
-                        ),
-                    textAlign = TextAlign.Center
-                )
+                        .size(250.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .offset(y = 30.dp),
+                    tint = MaterialTheme.colorScheme.primary)
+//                Text(
+//                    text = stringResource(id = R.string.welcomeBack),
+//                    style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Bold),
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(
+//                            top = innerPadding
+//                                .calculateTopPadding()
+//                                .plus(
+//                                    LargePadding
+//                                )
+//                        ),
+//                    textAlign = TextAlign.Center
+//                )
+//                Text(
+//                    text = stringResource(id = R.string.signInBodyText),
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    color = Color.Gray,
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(
+//                            bottom = LargePadding,
+//                            start = LargePadding,
+//                            end = LargePadding
+//                        ),
+//                    textAlign = TextAlign.Center
+//                )
                 //Email
                 CustomTextField(
                     modifier = Modifier
@@ -191,7 +203,8 @@ class LoginScreen : Screen {
                         .padding(
                             horizontal = LargePadding
                         ),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically ,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
 
                     Checkbox(checked = loginState.rememberMe, onCheckedChange = {
@@ -201,18 +214,22 @@ class LoginScreen : Screen {
                     Text(
                         text = stringResource(id = R.string.rememberMe),
                         style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.offset(-ExtraSmallPadding)
+                        modifier = Modifier
+                            .offset(-ExtraSmallPadding)
+
+                            .weight(1f)
                     )
 
-                    Spacer(modifier = Modifier.weight(1f))
+//                    Spacer(modifier = Modifier.weight(1f))
 
                     TextButton(onClick = {
-                        Log.d("LoginScreen", navigator.toString())
-//                            navigator.push(CheckEmailValidationScreen())
-                    }) {
+                        navigator.push(CheckEmailValidationScreen())
+                    } ,
+                        modifier = Modifier.weight(1f)) {
                         Text(
                             text = stringResource(id = R.string.forgotPassword),
-                            color = Color.Gray,
+                            color = colorResource(R.color.body).copy(0.7f),
+                            textAlign = TextAlign.Center,
                             textDecoration = TextDecoration.Underline,
                             style = MaterialTheme.typography.bodyMedium
                         )
@@ -251,9 +268,6 @@ class LoginScreen : Screen {
                 }
                 Spacer(modifier = Modifier.weight(1f))
 
-
-
-
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -272,14 +286,14 @@ class LoginScreen : Screen {
                         modifier = Modifier.offset(x = SmallPadding)
                     )
                     TextButton(onClick = {
-//                            navigator.push(SignUpScreen())
+                        navigator.push(ChooseUserTypeScreen())
                     }) {
                         Text(
-                            text = stringResource(id = R.string.signup),
+                            text =" " +  stringResource(id = R.string.signup),
                             style = MaterialTheme.typography.bodyLarge.copy(
                                 fontWeight = FontWeight.Bold
                             ),
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.primary
                         )
 
                     }
@@ -288,7 +302,8 @@ class LoginScreen : Screen {
                 Text(
                     text = stringResource(R.string.or),
                     style = MaterialTheme.typography.bodyMedium.copy(
-                        color = colorResource(R.color.placeholder)
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontWeight = FontWeight.Bold
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -317,14 +332,21 @@ class LoginScreen : Screen {
 
                     )
                     TextButton(onClick = {
-//                            navigator.push(SignUpScreen())
+                        (context as Activity).startActivity(
+                            Intent(
+                                context,
+                                MainActivity::class.java
+                            )
+                        )
+                        viewModel.saveAppEntry(APP_ENTRY , "3")
+//                        navigator.push(HomeScreen())
                     }) {
                         Text(
                             text = stringResource(id = R.string.withoutAnAccount),
                             style = MaterialTheme.typography.bodyLarge.copy(
                                 fontWeight = FontWeight.Bold
                             ),
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.primary
                         )
 
                     }
@@ -333,13 +355,13 @@ class LoginScreen : Screen {
             }
 
             CustomDialog(
-                title = "verify email",
-//                    stringResource(id = R.string.verifyEmail),
-                message = "verify email body",
-//                    stringResource(id = R.string.verifyEmailBody),
+                title =
+                stringResource(id = R.string.verifyEmail),
+                message =
+                stringResource(id = R.string.verifyEmailBody),
                 showDialog = loginState.needUserApprove ?: false,
                 onConfirmRequest = {
-//                        navigator.push(VerificationEmailSignUpScreen(SignUpState(email = loginState.email)))
+                    navigator.push(VerificationEmailSignUpScreen(SignUpState(email = loginState.email)))
                     viewModel.resetState()
                 },
                 onDismissRequest = {

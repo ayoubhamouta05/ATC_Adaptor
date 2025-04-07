@@ -6,16 +6,19 @@ import com.youppix.atcadaptor.data.manager.LocaleUserEntryManagerImpl
 import com.youppix.atcadaptor.data.remote.auth.AuthService
 import com.youppix.atcadaptor.data.remote.details.DetailsService
 import com.youppix.atcadaptor.data.remote.home.HomeService
+import com.youppix.atcadaptor.data.remote.profile.ProfileService
 import com.youppix.atcadaptor.data.repository.details.DetailsRepositoryImpl
 import com.youppix.atcadaptor.data.repository.forgotPassword.ForgotPasswordRepositoryImpl
 import com.youppix.atcadaptor.data.repository.home.HomeRepositoryImpl
 import com.youppix.atcadaptor.data.repository.login.LoginRepositoryImpl
+import com.youppix.atcadaptor.data.repository.profile.ProfileRepositoryImpl
 import com.youppix.atcadaptor.data.repository.signUp.SignUpRepositoryImpl
 import com.youppix.atcadaptor.domain.manager.LocaleUserEntryManager
 import com.youppix.atcadaptor.domain.repository.details.DetailsRepository
 import com.youppix.atcadaptor.domain.repository.forgotPassword.ForgotPasswordRepository
 import com.youppix.atcadaptor.domain.repository.home.HomeRepository
 import com.youppix.atcadaptor.domain.repository.login.LoginRepository
+import com.youppix.atcadaptor.domain.repository.profile.ProfileRepository
 import com.youppix.atcadaptor.domain.repository.signUp.SignUpRepository
 import com.youppix.atcadaptor.domain.useCases.auth.CheckEmailUseCase
 import com.youppix.atcadaptor.domain.useCases.auth.CheckPasswordUseCase
@@ -30,6 +33,11 @@ import com.youppix.atcadaptor.domain.useCases.forgotPassword.ForgotPasswordUseCa
 import com.youppix.atcadaptor.domain.useCases.forgotPassword.ResetPasswordUseCase
 import com.youppix.atcadaptor.domain.useCases.home.HomeSearchUseCase
 import com.youppix.atcadaptor.domain.useCases.home.HomeUseCases
+import com.youppix.atcadaptor.domain.useCases.profile.CheckEmailAvailabilityUseCase
+import com.youppix.atcadaptor.domain.useCases.profile.GetUserDataUseCase
+import com.youppix.atcadaptor.domain.useCases.profile.ProfileUseCases
+import com.youppix.atcadaptor.domain.useCases.profile.SaveUserData
+import com.youppix.atcadaptor.domain.useCases.profile.UpdatePersonalDetailsUseCase
 import com.youppix.atcadaptor.domain.useCases.signUp.AddUserUseCase
 import com.youppix.atcadaptor.domain.useCases.signUp.CheckPhoneUseCase
 import com.youppix.atcadaptor.domain.useCases.signUp.CheckUserNameUseCase
@@ -202,6 +210,39 @@ object AppModule {
     fun provideDetailsUseCases(detailsRepository: DetailsRepository): DetailsUseCases =
         DetailsUseCases(
             getDetails = GetDetailsUseCase(detailsRepository)
+        )
+
+
+    // Profile
+    @Provides
+    @Singleton
+    fun provideProfileService(client: HttpClient): ProfileService =
+        ProfileService(client)
+
+    @Provides
+    @Singleton
+    fun provideProfileRepository(
+        profileService: ProfileService,
+        localeUserEntryManager: LocaleUserEntryManager,
+    ): ProfileRepository =
+        ProfileRepositoryImpl(profileService = profileService, localeUserEntryManager)
+
+    @Provides
+    @Singleton
+    fun provideProfileUseCases(
+        profileRepository: ProfileRepository,
+
+    ): ProfileUseCases =
+        ProfileUseCases(
+            saveUserData = SaveUserData(profileRepository),
+            getUserData = GetUserDataUseCase(profileRepository),
+            updatePersonalDetails = UpdatePersonalDetailsUseCase(profileRepository),
+            checkEmail = CheckEmailUseCase(profileRepository = profileRepository),
+            checkPassword = CheckPasswordUseCase(profileRepository = profileRepository),
+            checkUserName = CheckUserNameUseCase(profileRepository = profileRepository),
+            checkPhone = CheckPhoneUseCase(profileRepository = profileRepository),
+            checkEmailAvailability = CheckEmailAvailabilityUseCase(profileRepository)
+
         )
 
 }

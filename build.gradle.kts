@@ -8,3 +8,9 @@ plugins {
     alias(libs.plugins.serialization)
 
 }
+
+//allprojects{
+//    tasks.matching { it.name.contains("kapt") }.configureEach {
+//        enabled = false
+//    }
+//}

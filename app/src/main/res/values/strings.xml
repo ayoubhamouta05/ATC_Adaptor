@@ -108,4 +108,9 @@ ou continuez avec les réseaux sociaux</string>
     <string name="orderStatus">Statut de la commande</string>
     <string name="withoutAnAccount" translatable="false">sans compte</string>
     <string name="or">Ou</string>
+
+    <string name="error">Une erreur est survenue</string>
+    <string name="ifYouChangeEmailYouMustVerifyIt">Si vous modifiez votre email, vous devriez le vérifier.</string>
+    <string name="bothPasswordsAreTheSame">Les mots de passe sont les mêmes</string>
+
 </resources>

@@ -8,6 +8,8 @@ import com.youppix.atcadaptor.presentation.authentication.signup.SignUpViewModel
 import com.youppix.atcadaptor.presentation.mainApp.calculation.CalculationViewModel
 import com.youppix.atcadaptor.presentation.mainApp.details.DetailsViewModel
 import com.youppix.atcadaptor.presentation.mainApp.home.HomeViewModel
+import com.youppix.atcadaptor.presentation.mainApp.personalDetails.PersonalDetailsViewModel
+import com.youppix.atcadaptor.presentation.mainApp.profile.ProfileScreenViewModel
 import com.youppix.atcadaptor.presentation.mainApp.scanner.ScannerScreenViewModel
 import dagger.Binds
 import dagger.Module
@@ -54,4 +56,15 @@ abstract class HiltScreenModels {
     @IntoMap
     @ScreenModelKey(ScannerScreenViewModel::class)
     abstract fun bindHiltScannerScreenViewModel(scannerScreenViewModel: ScannerScreenViewModel): ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(ProfileScreenViewModel::class)
+    abstract fun bindHiltProfileScreenViewModel(profileScreenViewModel: ProfileScreenViewModel): ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(PersonalDetailsViewModel::class)
+    abstract fun bindHiltPersonalDetailsViewModel(personalDetailsViewModel: PersonalDetailsViewModel): ScreenModel
+
 }

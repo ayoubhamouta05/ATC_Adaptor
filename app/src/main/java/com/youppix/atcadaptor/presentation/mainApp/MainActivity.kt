@@ -49,6 +49,7 @@ import com.youppix.atcadaptor.presentation.mainApp.calculation.CalculationScreen
 import com.youppix.atcadaptor.presentation.mainApp.components.CustomBottomBar
 import com.youppix.atcadaptor.presentation.mainApp.components.shadow
 import com.youppix.atcadaptor.presentation.mainApp.home.HomeScreen
+import com.youppix.atcadaptor.presentation.mainApp.profile.ProfileScreen
 import com.youppix.atcadaptor.presentation.mainApp.scanner.ScannerScreen
 import com.youppix.atcadaptor.presentation.mainApp.support.SupportScreen
 import com.youppix.atcadaptor.presentation.ui.theme.ATCAdaptorTheme
@@ -58,7 +59,7 @@ import java.util.Locale
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private var navigator: Navigator? = null
-    lateinit var viewModel : MainActivityViewModel
+//    lateinit var viewModel : MainActivityViewModel
     private val currentLang by lazy {
         getSharedPreferences(APP_LANG, 0).getString(APP_LANG, Locale.getDefault().language)
             ?: Locale.getDefault().language
@@ -115,7 +116,7 @@ class MainActivity : ComponentActivity() {
                                 CalculationScreen::class.java.simpleName -> setCurrentScreen(0)
                                 ScannerScreen::class.java.simpleName -> setCurrentScreen(3)
                                 AlertScreen::class.java.simpleName -> setCurrentScreen(1)
-                                SupportScreen::class.java.simpleName -> setCurrentScreen(4)
+                                ProfileScreen::class.java.simpleName -> setCurrentScreen(4)
                             }
                         }
                     }
@@ -157,9 +158,9 @@ class MainActivity : ComponentActivity() {
                                     }
 
                                     4 -> {
-                                        if (navigator?.lastItem?.javaClass?.name != SupportScreen::class.java.name)
-                                            if(navigator?.popUntil { screen -> screen ==  SupportScreen() } == false)
-                                                navigator?.replace(SupportScreen())
+                                        if (navigator?.lastItem?.javaClass?.name != ProfileScreen::class.java.name)
+                                            if(navigator?.popUntil { screen -> screen ==  ProfileScreen() } == false)
+                                                navigator?.replace(ProfileScreen())
 
                                     }
                                 }

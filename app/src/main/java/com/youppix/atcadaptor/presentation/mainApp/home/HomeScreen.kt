@@ -33,6 +33,7 @@ import com.youppix.atcadaptor.presentation.mainApp.components.CustomSearchBar
 import com.youppix.atcadaptor.presentation.mainApp.components.EmptyScreen
 import com.youppix.atcadaptor.presentation.mainApp.details.DetailsScreen
 import com.youppix.atcadaptor.presentation.mainApp.home.components.HomeSearchingCartItem
+import com.youppix.atcadaptor.presentation.mainApp.home.components.WelcomeScreen
 import com.youppix.atcadaptor.presentation.mainApp.scanner.ScannerScreenEvent
 import com.youppix.atcadaptor.presentation.ui.theme.ATCAdaptorTheme
 
@@ -133,11 +134,11 @@ class HomeScreen : Screen {
                             }
                         }
 
-                    } else {
-
+                    } else if(searchQuery.isEmpty()){
+                        WelcomeScreen(modifier = Modifier.padding(innerPadding))
+                    }else{
                         EmptyScreen(
                             state.errorMessage,
-                            searchQuery = searchQuery,
                             if (userType == "1") "il n’y a pas de patient ou de données avec cette requête de recherche" else "il n’y a pas de données avec cette requête de recherche"
                         )
                     }

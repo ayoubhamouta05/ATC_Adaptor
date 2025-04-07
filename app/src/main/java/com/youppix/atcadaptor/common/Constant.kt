@@ -66,7 +66,7 @@ object Constant {
             screen = 3
         ),
         BottomBar(
-            title = "Support",
+            title = "Profile",
             selectedIcon = R.drawable.ic_support,
             unselectedIcon = R.drawable.ic_support,
             screen = 4
@@ -74,6 +74,11 @@ object Constant {
 
 
         )
+
+    val lANG_LIST = listOf(
+        Pair(R.string.english,"en"),
+        Pair(R.string.arabic ,"ar")
+    )
 
     fun checkUserName(name: String, context: Context): Resource<Boolean> {
         val regex = "^[A-Za-z][A-Za-z0-9_]*( [A-Za-z0-9_]+)*$"

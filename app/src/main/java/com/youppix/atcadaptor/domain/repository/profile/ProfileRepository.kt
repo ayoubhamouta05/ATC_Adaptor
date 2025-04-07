@@ -9,7 +9,6 @@ import java.io.File
 interface ProfileRepository {
 
     fun saveAppEntry(key: String, value: String)
-    suspend fun uploadImage(userId : Int ,file: File): Flow<Resource<StandardResponse>>
 
     fun getUserInfo(key : String , defaultValue :String) : String
 

@@ -1,5 +1,6 @@
 package com.youppix.atcadaptor.presentation.mainApp.profile
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
@@ -60,6 +61,8 @@ import com.youppix.atcadaptor.presentation.mainApp.home.HomeScreen
 import com.youppix.atcadaptor.presentation.mainApp.profile.components.ChangeLangSection
 import com.youppix.atcadaptor.presentation.mainApp.profile.components.ProfileItem
 import com.youppix.atcadaptor.presentation.mainApp.personalDetails.PersonalDetailsScreen
+import com.youppix.atcadaptor.presentation.mainApp.profile.components.ContactezScreen
+import com.youppix.atcadaptor.presentation.mainApp.profile.components.PolitiqueScreen
 import com.youppix.atcadaptor.presentation.mainApp.scanner.ScannerScreenEvent
 import java.util.Locale
 
@@ -166,6 +169,9 @@ class ProfileScreen : Screen {
                     Button(
                         onClick = {
                             // todo : take him to login screen and save app entry to 0
+                            viewModel.saveAppEntry("0")
+                            context.startActivity(Intent(context , AuthActivity::class.java))
+                            (context as Activity).finishAffinity()
                         },
                         modifier = Modifier.padding(horizontal = MediumPadding),
                         shape = CircleShape
@@ -183,8 +189,8 @@ class ProfileScreen : Screen {
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
-                        .padding(horizontal = MediumPadding)
-                        .animateContentSize()
+                        .padding(horizontal = MediumPadding,vertical = SmallPadding)
+                        .animateContentSize() ,
                 ) {
 
                     item {
@@ -254,7 +260,9 @@ class ProfileScreen : Screen {
                                 isArabic = isArabic,
                                 painter = painterResource(id = R.drawable.ic_security),
                                 title = stringResource(id = R.string.privacyPolicy)
-                            ) {}
+                            ) {
+                                navigator.push(PolitiqueScreen())
+                            }
                             Spacer(
                                 modifier = Modifier
                                     .height(0.5.dp)
@@ -284,7 +292,9 @@ class ProfileScreen : Screen {
                                 isArabic = isArabic,
                                 imageVector = Icons.AutoMirrored.Outlined.Message,
                                 title = stringResource(id = R.string.contactUs)
-                            ) {}
+                            ) {
+                                navigator.push(ContactezScreen())
+                            }
                             Spacer(
                                 modifier = Modifier
                                     .height(0.5.dp)

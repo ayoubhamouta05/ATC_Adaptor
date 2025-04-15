@@ -201,7 +201,7 @@ class LoginScreen : Screen {
                     Modifier
                         .fillMaxWidth()
                         .padding(
-                            horizontal = LargePadding
+                            horizontal = MediumPadding
                         ),
                     verticalAlignment = Alignment.CenterVertically ,
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -214,18 +214,14 @@ class LoginScreen : Screen {
                     Text(
                         text = stringResource(id = R.string.rememberMe),
                         style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier
-                            .offset(-ExtraSmallPadding)
-
-                            .weight(1f)
+                        modifier = Modifier.offset(-ExtraSmallPadding)
                     )
 
-//                    Spacer(modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.weight(1f))
 
                     TextButton(onClick = {
                         navigator.push(CheckEmailValidationScreen())
-                    } ,
-                        modifier = Modifier.weight(1f)) {
+                    } ) {
                         Text(
                             text = stringResource(id = R.string.forgotPassword),
                             color = colorResource(R.color.body).copy(0.7f),

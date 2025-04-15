@@ -2,7 +2,7 @@ package com.youppix.atcadaptor.common
 
 object Urls {
 
-    private const val BASE_URL = "http://192.168.103.51:8080/atc_adaptor/"
+    private const val BASE_URL = "http://192.168.230.51:8080/atc_adaptor/"
 
     /** auth urls */
     const val SIGNUP_URL = "$BASE_URL/auth/signup.php"
@@ -21,4 +21,10 @@ object Urls {
     /** profile urls */
     const val UPDATE_PERSONAL_DETAILS_URL = "$BASE_URL/profile/updatePersonalDetails.php"
     const val CHECK_EMAIL_AVAILABILITY_URL = "$BASE_URL/profile/checkEmailAvailability.php"
+
+    /** calculation urls */
+    const val GET_MEDICAMENT_URL = "$BASE_URL/calculation/getMedicament.php"
+    const val GET_CALCULATIONS_HISTORY_URL = "$BASE_URL/calculation/getCalculationsHistory.php"
+    const val GET_CALCULATION_BY_ID_URL = "$BASE_URL/calculation/getCalculationsHistory.php"
+    const val ADD_CALCULATION_HISTORY_URL = "$BASE_URL/calculation/addCalculationHistory.php"
 }

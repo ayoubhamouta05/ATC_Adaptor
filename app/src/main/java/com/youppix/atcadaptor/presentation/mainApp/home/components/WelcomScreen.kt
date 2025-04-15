@@ -47,6 +47,7 @@ fun WelcomeScreen(modifier: Modifier = Modifier) {
                 Image(
                     painter = painterResource(id = R.drawable.atc_logo),
                     contentDescription = null,
+                    modifier = Modifier.size(150.dp),
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
                 )
                 Column(

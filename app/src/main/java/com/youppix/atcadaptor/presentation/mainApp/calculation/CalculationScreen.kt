@@ -1,6 +1,7 @@
 package com.youppix.atcadaptor.presentation.mainApp.calculation
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,12 +20,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.youppix.atcadaptor.R
+import com.youppix.atcadaptor.common.Constant
 import com.youppix.atcadaptor.common.DFGType
 import com.youppix.atcadaptor.common.Dimens.BottomBarHeight
 import com.youppix.atcadaptor.common.Dimens.LargePadding
@@ -32,6 +36,7 @@ import com.youppix.atcadaptor.common.Dimens.MediumPadding
 import com.youppix.atcadaptor.common.Dimens.SmallPadding
 import com.youppix.atcadaptor.common.Genre
 import com.youppix.atcadaptor.common.Race
+import com.youppix.atcadaptor.presentation.components.CustomCircularProgress
 import com.youppix.atcadaptor.presentation.components.CustomTextField
 import com.youppix.atcadaptor.presentation.components.CustomTopAppBar
 import com.youppix.atcadaptor.presentation.mainApp.calculation.components.BlockSeparator
@@ -49,8 +54,15 @@ class CalculationScreen : Screen {
         val state by viewModel.state
         val context = LocalContext.current
 
+        val userType = context.getSharedPreferences(Constant.APP_ENTRY, 0)
+            .getString("userType", "0")
+
+        LaunchedEffect(Unit) {
+            viewModel.onEvent(CalculationEvent.GetMedicament)
+        }
+
         LaunchedEffect(state.error) {
-            if (!state.error.isNullOrEmpty()) {
+            if (state.error != null) {
                 Toast.makeText(context, "error : " + state.error, Toast.LENGTH_SHORT).show()
                 viewModel.onEvent(CalculationEvent.InitializeErrorMessage)
             }
@@ -59,7 +71,9 @@ class CalculationScreen : Screen {
         Scaffold(modifier = Modifier.fillMaxSize(),
             topBar = {
                 CustomTopAppBar(
-                    title = "Calculer",
+                    title = if (userType == "0") stringResource(R.string.calculationHistory) else stringResource(
+                        R.string.calculate
+                    ),
                     isArabic = false
                 ) {
                     if (navigator.canPop) {
@@ -69,20 +83,33 @@ class CalculationScreen : Screen {
                     }
                 }
             }) { innerPadding ->
-            MedicationCalculationScreen(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .padding(top = SmallPadding),
-                state = state,
-                inputState = inputState,
-                inputEvent = viewModel::onInputEvent,
-                event = viewModel::onEvent
-            )
+            if (userType == "1"){
+                if (!state.isLoading) {
+                    AnimatedVisibility(true) {
+                        MedicationCalculationScreen(
+                            modifier = Modifier
+                                .padding(innerPadding)
+                                .padding(top = SmallPadding),
+                            state = state,
+                            inputState = inputState,
+                            inputEvent = viewModel::onInputEvent,
+                            event = viewModel::onEvent
+                        )
+                    }
+
+                } else {
+                    CustomCircularProgress(state.isLoading)
+                }
+            }else {
+                Text("History" ,modifier = Modifier.padding(innerPadding))
+            }
+
 
             if (state.showBottomSheet) {
                 CalculationBottomSheet(
                     modifier = Modifier,
                     inputState = inputState,
+                    event = viewModel::onEvent,
                     state = state
                 ) {
                     viewModel.onEvent(CalculationEvent.ToggleShowBottomSheet)
@@ -127,7 +154,9 @@ fun MedicationCalculationScreen(
             DropdownMenuLabel(
                 modifier = Modifier.padding(horizontal = SmallPadding),
                 name = inputState.nomDeMedicament.ifEmpty { "Sélectionnez un médicament" },
-                menu = listOf("mid1", "mid2"),
+                menu = state.medicamentsList.map {
+                    it.medicaments_nom
+                },
                 isError = false,
                 expanded = state.dropNomDeMedicamentMenu,
                 selectedItem = inputState.nomDeMedicament,
@@ -518,15 +547,14 @@ fun MedicationCalculationScreen(
 
                     event(CalculationEvent.OnCalculate)
 
-                    if (state.error == null)
-                        event(CalculationEvent.ToggleShowBottomSheet)
+//                    if (state.error == null)
+//                        event(CalculationEvent.ToggleShowBottomSheet)
 
                 }) {
                     Text("Calculer", fontWeight = FontWeight.Bold)
                 }
             }
         }
-
 
 
     }

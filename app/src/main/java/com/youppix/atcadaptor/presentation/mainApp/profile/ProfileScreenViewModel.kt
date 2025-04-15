@@ -12,6 +12,7 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import com.youppix.atcadaptor.common.Constant.APP_ENTRY
 import com.youppix.atcadaptor.common.Constant.APP_LANG
 import com.youppix.atcadaptor.common.Resource
+import com.youppix.atcadaptor.domain.useCases.appEntry.AppEntryUseCases
 import com.youppix.atcadaptor.domain.useCases.profile.ProfileUseCases
 import com.youppix.atcadaptor.presentation.components.isNotificationPermissionGranted
 import kotlinx.coroutines.flow.launchIn
@@ -23,7 +24,8 @@ import java.io.InputStream
 import javax.inject.Inject
 
 class ProfileScreenViewModel @Inject constructor(
-    private val profileUseCases: ProfileUseCases
+    private val profileUseCases: ProfileUseCases,
+    private val appEntryUseCases: AppEntryUseCases,
 ) : ScreenModel {
 
     private var _state = mutableStateOf(ProfileState())
@@ -111,6 +113,10 @@ class ProfileScreenViewModel @Inject constructor(
                 userCustomerId = userCustomerId.ifEmpty { state.value.user.userCustomerId }
             )
         )
+    }
+
+     fun saveAppEntry(value : String){
+        appEntryUseCases.saveAppEntryUseCase(APP_ENTRY , value)
     }
 
 

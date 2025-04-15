@@ -87,11 +87,11 @@ object Constant {
         val m: Matcher = p.matcher(name)
         return when {
             name.isBlank() || trimName.isEmpty() -> {
-                Resource.Error("context.getString(R.string.userNameEmptyErrorMsg)", false)
+                Resource.Error(context.getString(R.string.userNameEmptyErrorMsg), false)
             }
 
             !m.matches() -> {
-                Resource.Error("context.getString(R.string.userNameWrongPatternErrorMsg)", false)
+                Resource.Error(context.getString(R.string.userNameWrongPatternErrorMsg), false)
             }
 
             else -> {
@@ -107,11 +107,11 @@ object Constant {
         val m: Matcher = p.matcher(phone)
         return when {
             phone.isBlank() || trimPhone.isEmpty() -> {
-                Resource.Error("context.getString(R.string.phoneEmptyErrorMsg)", false)
+                Resource.Error(context.getString(R.string.phoneEmptyErrorMsg), false)
             }
 
             !m.matches() -> {
-                Resource.Error("context.getString(R.string.phoneWrongPatternErrorMsg)", false)
+                Resource.Error(context.getString(R.string.phoneWrongPatternErrorMsg), false)
             }
 
             else -> {
@@ -125,11 +125,11 @@ object Constant {
 
         return when {
             trimEmail.isBlank() || trimEmail.isEmpty() -> {
-                Resource.Error("context.getString(R.string.emailEmptyErrorMsg)", false)
+                Resource.Error(context.getString(R.string.emailEmptyErrorMsg), false)
             }
 
             !Patterns.EMAIL_ADDRESS.matcher(trimEmail).matches() -> {
-                Resource.Error("context.getString(R.string.emailWrongPatternErrorMsg)", false)
+                Resource.Error(context.getString(R.string.emailWrongPatternErrorMsg), false)
             }
 
             else -> {
@@ -143,11 +143,11 @@ object Constant {
 
         return when {
             trimPassword.isBlank() || trimPassword.isEmpty() -> {
-                Resource.Error("context.getString(R.string.passwordEmptyErrorMsg)", false)
+                Resource.Error(context.getString(R.string.passwordEmptyErrorMsg), false)
             }
 
             trimPassword.length < 6 -> {
-                Resource.Error("context.getString(R.string.passwordWrongPatternErrorMsg)", false)
+                Resource.Error(context.getString(R.string.passwordWrongPatternErrorMsg), false)
             }
 
             else -> {

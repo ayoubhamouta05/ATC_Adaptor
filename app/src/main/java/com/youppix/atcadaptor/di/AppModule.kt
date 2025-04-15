@@ -1,12 +1,13 @@
 package com.youppix.atcadaptor.di
 
 import android.app.Application
-import android.telecom.Call.Details
 import com.youppix.atcadaptor.data.manager.LocaleUserEntryManagerImpl
 import com.youppix.atcadaptor.data.remote.auth.AuthService
+import com.youppix.atcadaptor.data.remote.calculation.CalculationService
 import com.youppix.atcadaptor.data.remote.details.DetailsService
 import com.youppix.atcadaptor.data.remote.home.HomeService
 import com.youppix.atcadaptor.data.remote.profile.ProfileService
+import com.youppix.atcadaptor.data.repository.calculation.CalculationRepositoryImpl
 import com.youppix.atcadaptor.data.repository.details.DetailsRepositoryImpl
 import com.youppix.atcadaptor.data.repository.forgotPassword.ForgotPasswordRepositoryImpl
 import com.youppix.atcadaptor.data.repository.home.HomeRepositoryImpl
@@ -14,6 +15,7 @@ import com.youppix.atcadaptor.data.repository.login.LoginRepositoryImpl
 import com.youppix.atcadaptor.data.repository.profile.ProfileRepositoryImpl
 import com.youppix.atcadaptor.data.repository.signUp.SignUpRepositoryImpl
 import com.youppix.atcadaptor.domain.manager.LocaleUserEntryManager
+import com.youppix.atcadaptor.domain.repository.calculation.CalculationRepository
 import com.youppix.atcadaptor.domain.repository.details.DetailsRepository
 import com.youppix.atcadaptor.domain.repository.forgotPassword.ForgotPasswordRepository
 import com.youppix.atcadaptor.domain.repository.home.HomeRepository
@@ -27,6 +29,11 @@ import com.youppix.atcadaptor.domain.useCases.appEntry.GetAppEntryUseCase
 import com.youppix.atcadaptor.domain.useCases.login.LoginUseCase
 import com.youppix.atcadaptor.domain.useCases.login.LoginUseCases
 import com.youppix.atcadaptor.domain.useCases.appEntry.SaveAppEntryUseCase
+import com.youppix.atcadaptor.domain.useCases.calculation.AddCalculationHistoryUseCase
+import com.youppix.atcadaptor.domain.useCases.calculation.CalculationUseCases
+import com.youppix.atcadaptor.domain.useCases.calculation.GetCalculationByIdUseCase
+import com.youppix.atcadaptor.domain.useCases.calculation.GetCalculationsHistoryUseCase
+import com.youppix.atcadaptor.domain.useCases.calculation.GetMedicamentUseCase
 import com.youppix.atcadaptor.domain.useCases.details.DetailsUseCases
 import com.youppix.atcadaptor.domain.useCases.details.GetDetailsUseCase
 import com.youppix.atcadaptor.domain.useCases.forgotPassword.ForgotPasswordUseCases
@@ -109,8 +116,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthService(client: HttpClient): AuthService =
-        AuthService(client)
+    fun provideAuthService(client: HttpClient): AuthService = AuthService(client)
 
 
     // Login
@@ -144,15 +150,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSignUpUseCases(signUpRepository: SignUpRepository): SignUpUseCases =
-        SignUpUseCases(
-            checkEmail = CheckEmailUseCase(signUpRepository = signUpRepository),
-            checkPassword = CheckPasswordUseCase(signUpRepository = signUpRepository),
-            checkUserName = CheckUserNameUseCase(signUpRepository = signUpRepository),
-            checkPhone = CheckPhoneUseCase(signUpRepository = signUpRepository),
-            addUser = AddUserUseCase(signUpRepository = signUpRepository),
-            verifyCode = VerifyCodeUseCase(signUpRepository = signUpRepository)
-        )
+    fun provideSignUpUseCases(signUpRepository: SignUpRepository): SignUpUseCases = SignUpUseCases(
+        checkEmail = CheckEmailUseCase(signUpRepository = signUpRepository),
+        checkPassword = CheckPasswordUseCase(signUpRepository = signUpRepository),
+        checkUserName = CheckUserNameUseCase(signUpRepository = signUpRepository),
+        checkPhone = CheckPhoneUseCase(signUpRepository = signUpRepository),
+        addUser = AddUserUseCase(signUpRepository = signUpRepository),
+        verifyCode = VerifyCodeUseCase(signUpRepository = signUpRepository)
+    )
 
 
     // ForgotPassword
@@ -188,9 +193,12 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideHomeUseCases(homeRepository: HomeRepository , localeUserEntryManager: LocaleUserEntryManager? = null,): HomeUseCases = HomeUseCases(
+    fun provideHomeUseCases(
+        homeRepository: HomeRepository,
+        localeUserEntryManager: LocaleUserEntryManager? = null,
+    ): HomeUseCases = HomeUseCases(
         search = HomeSearchUseCase(homeRepository),
-        saveAppEntry =  if (localeUserEntryManager != null) SaveAppEntryUseCase(
+        saveAppEntry = if (localeUserEntryManager != null) SaveAppEntryUseCase(
             localeUserEntryManager
         ) else null
     )
@@ -216,8 +224,7 @@ object AppModule {
     // Profile
     @Provides
     @Singleton
-    fun provideProfileService(client: HttpClient): ProfileService =
-        ProfileService(client)
+    fun provideProfileService(client: HttpClient): ProfileService = ProfileService(client)
 
     @Provides
     @Singleton
@@ -232,17 +239,41 @@ object AppModule {
     fun provideProfileUseCases(
         profileRepository: ProfileRepository,
 
-    ): ProfileUseCases =
-        ProfileUseCases(
-            saveUserData = SaveUserData(profileRepository),
-            getUserData = GetUserDataUseCase(profileRepository),
-            updatePersonalDetails = UpdatePersonalDetailsUseCase(profileRepository),
-            checkEmail = CheckEmailUseCase(profileRepository = profileRepository),
-            checkPassword = CheckPasswordUseCase(profileRepository = profileRepository),
-            checkUserName = CheckUserNameUseCase(profileRepository = profileRepository),
-            checkPhone = CheckPhoneUseCase(profileRepository = profileRepository),
-            checkEmailAvailability = CheckEmailAvailabilityUseCase(profileRepository)
+        ): ProfileUseCases = ProfileUseCases(
+        saveUserData = SaveUserData(profileRepository),
+        getUserData = GetUserDataUseCase(profileRepository),
+        updatePersonalDetails = UpdatePersonalDetailsUseCase(profileRepository),
+        checkEmail = CheckEmailUseCase(profileRepository = profileRepository),
+        checkPassword = CheckPasswordUseCase(profileRepository = profileRepository),
+        checkUserName = CheckUserNameUseCase(profileRepository = profileRepository),
+        checkPhone = CheckPhoneUseCase(profileRepository = profileRepository),
+        checkEmailAvailability = CheckEmailAvailabilityUseCase(profileRepository)
 
-        )
+    )
+
+
+    // Calculation
+    @Provides
+    @Singleton
+    fun provideCalculationService(client: HttpClient): CalculationService =
+        CalculationService(client)
+
+    @Provides
+    @Singleton
+    fun provideCalculationRepository(
+        calculationService: CalculationService
+    ): CalculationRepository = CalculationRepositoryImpl(calculationService)
+
+    @Provides
+    @Singleton
+    fun provideCalculationUseCases(
+        calculationRepository: CalculationRepository
+    ): CalculationUseCases = CalculationUseCases(
+        getMedicaments = GetMedicamentUseCase(calculationRepository),
+        getCalculationByIdUseCase = GetCalculationByIdUseCase(calculationRepository),
+        getCalculationsHistoryUseCase = GetCalculationsHistoryUseCase(calculationRepository),
+        addCalculationHistoryUseCase = AddCalculationHistoryUseCase(calculationRepository)
+    )
+
 
 }

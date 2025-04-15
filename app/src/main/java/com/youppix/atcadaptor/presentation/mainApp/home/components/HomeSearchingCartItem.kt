@@ -74,7 +74,7 @@ fun HomeSearchingCartItem(
 
             // Medication & Dose (visible to both doctors & patients)
             homeSearchItemData.medicationName?.let { medicationName ->
-                Spacer(modifier = Modifier.height(8.dp))
+//                Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.padding(top = if (userType == 1) 0.dp else SmallPadding)
                     .offset(x = (-5).dp),

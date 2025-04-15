@@ -1,8 +1,10 @@
 package com.youppix.atcadaptor.presentation.mainApp.calculation
 
+import com.youppix.atcadaptor.domain.model.medicament.Medicament
+
 data class CalculationState(
     val isLoading: Boolean = false,
-    val error: String? = "",
+    val error: String? = null,
     val showBottomSheet: Boolean = false,
 
     val dropGenreMenu: Boolean = false,
@@ -13,5 +15,9 @@ data class CalculationState(
     val dropDfgTypeMenu: Boolean = false,
     val dropNomDeMedicamentMenu: Boolean = false,
 
-    val recommendationAndDose : Pair<String,Double> = Pair("" , 0.0)
+    val recommendationAndDose : Pair<String,Double> = Pair("" , 0.0),
+
+    val medicamentsList : List<Medicament> = emptyList(),
+
+    val comment : String =""
 )

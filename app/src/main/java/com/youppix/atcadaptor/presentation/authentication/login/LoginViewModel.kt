@@ -163,12 +163,10 @@ class LoginViewModel @Inject constructor(
             loginUseCases.saveAppEntry?.let {
                 it("userName", user.userName)
                 it("userId", user.userId.toString())
-                user.userCustomerId?.let {
-                    it("userCustomerId" , user.userCustomerId)
-                }
+
                 it("userEmail", user.userEmail)
                 it("userPhone", user.userPhone)
-                it("userImage" , user.userImage ?: "")
+                
                 it("userType" , user.userType.toString())
                 it("subscribeToTopics" , true.toString())
             }

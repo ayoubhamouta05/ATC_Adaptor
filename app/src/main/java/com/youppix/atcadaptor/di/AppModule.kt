@@ -2,6 +2,7 @@ package com.youppix.atcadaptor.di
 
 import android.app.Application
 import com.youppix.atcadaptor.data.manager.LocaleUserEntryManagerImpl
+import com.youppix.atcadaptor.data.remote.alert.AlertService
 import com.youppix.atcadaptor.data.remote.auth.AuthService
 import com.youppix.atcadaptor.data.remote.calculation.CalculationService
 import com.youppix.atcadaptor.data.remote.details.DetailsService
@@ -12,6 +13,7 @@ import com.youppix.atcadaptor.data.repository.details.DetailsRepositoryImpl
 import com.youppix.atcadaptor.data.repository.forgotPassword.ForgotPasswordRepositoryImpl
 import com.youppix.atcadaptor.data.repository.home.HomeRepositoryImpl
 import com.youppix.atcadaptor.data.repository.login.LoginRepositoryImpl
+import com.youppix.atcadaptor.data.repository.notifications.NotificationsRepositoryImpl
 import com.youppix.atcadaptor.data.repository.profile.ProfileRepositoryImpl
 import com.youppix.atcadaptor.data.repository.signUp.SignUpRepositoryImpl
 import com.youppix.atcadaptor.domain.manager.LocaleUserEntryManager
@@ -20,6 +22,7 @@ import com.youppix.atcadaptor.domain.repository.details.DetailsRepository
 import com.youppix.atcadaptor.domain.repository.forgotPassword.ForgotPasswordRepository
 import com.youppix.atcadaptor.domain.repository.home.HomeRepository
 import com.youppix.atcadaptor.domain.repository.login.LoginRepository
+import com.youppix.atcadaptor.domain.repository.notifications.NotificationsRepository
 import com.youppix.atcadaptor.domain.repository.profile.ProfileRepository
 import com.youppix.atcadaptor.domain.repository.signUp.SignUpRepository
 import com.youppix.atcadaptor.domain.useCases.auth.CheckEmailUseCase
@@ -34,17 +37,23 @@ import com.youppix.atcadaptor.domain.useCases.calculation.CalculationUseCases
 import com.youppix.atcadaptor.domain.useCases.calculation.GetCalculationByIdUseCase
 import com.youppix.atcadaptor.domain.useCases.calculation.GetCalculationsHistoryUseCase
 import com.youppix.atcadaptor.domain.useCases.calculation.GetMedicamentUseCase
+import com.youppix.atcadaptor.domain.useCases.calculation.GetUsersUseCase
 import com.youppix.atcadaptor.domain.useCases.details.DetailsUseCases
 import com.youppix.atcadaptor.domain.useCases.details.GetDetailsUseCase
+import com.youppix.atcadaptor.domain.useCases.details.GetPatientDataUseCase
 import com.youppix.atcadaptor.domain.useCases.forgotPassword.ForgotPasswordUseCases
 import com.youppix.atcadaptor.domain.useCases.forgotPassword.ResetPasswordUseCase
 import com.youppix.atcadaptor.domain.useCases.home.HomeSearchUseCase
 import com.youppix.atcadaptor.domain.useCases.home.HomeUseCases
+import com.youppix.atcadaptor.domain.useCases.notifications.GetNotificationsUseCase
+import com.youppix.atcadaptor.domain.useCases.notifications.NotificationsUseCases
+import com.youppix.atcadaptor.domain.useCases.notifications.UpdateNotificationUseCase
 import com.youppix.atcadaptor.domain.useCases.profile.CheckEmailAvailabilityUseCase
 import com.youppix.atcadaptor.domain.useCases.profile.GetUserDataUseCase
 import com.youppix.atcadaptor.domain.useCases.profile.ProfileUseCases
 import com.youppix.atcadaptor.domain.useCases.profile.SaveUserData
 import com.youppix.atcadaptor.domain.useCases.profile.UpdatePersonalDetailsUseCase
+import com.youppix.atcadaptor.domain.useCases.profile.UpdateUserQrCodeUseCase
 import com.youppix.atcadaptor.domain.useCases.signUp.AddUserUseCase
 import com.youppix.atcadaptor.domain.useCases.signUp.CheckPhoneUseCase
 import com.youppix.atcadaptor.domain.useCases.signUp.CheckUserNameUseCase
@@ -217,7 +226,8 @@ object AppModule {
     @Singleton
     fun provideDetailsUseCases(detailsRepository: DetailsRepository): DetailsUseCases =
         DetailsUseCases(
-            getDetails = GetDetailsUseCase(detailsRepository)
+            getDetailsUseCase = GetDetailsUseCase(detailsRepository),
+            getPatientDataUseCase = GetPatientDataUseCase(detailsRepository)
         )
 
 
@@ -237,9 +247,8 @@ object AppModule {
     @Provides
     @Singleton
     fun provideProfileUseCases(
-        profileRepository: ProfileRepository,
-
-        ): ProfileUseCases = ProfileUseCases(
+        profileRepository: ProfileRepository
+    ): ProfileUseCases = ProfileUseCases(
         saveUserData = SaveUserData(profileRepository),
         getUserData = GetUserDataUseCase(profileRepository),
         updatePersonalDetails = UpdatePersonalDetailsUseCase(profileRepository),
@@ -247,8 +256,8 @@ object AppModule {
         checkPassword = CheckPasswordUseCase(profileRepository = profileRepository),
         checkUserName = CheckUserNameUseCase(profileRepository = profileRepository),
         checkPhone = CheckPhoneUseCase(profileRepository = profileRepository),
-        checkEmailAvailability = CheckEmailAvailabilityUseCase(profileRepository)
-
+        checkEmailAvailability = CheckEmailAvailabilityUseCase(profileRepository),
+        updateUserQrCode = UpdateUserQrCodeUseCase(profileRepository),
     )
 
 
@@ -272,8 +281,28 @@ object AppModule {
         getMedicaments = GetMedicamentUseCase(calculationRepository),
         getCalculationByIdUseCase = GetCalculationByIdUseCase(calculationRepository),
         getCalculationsHistoryUseCase = GetCalculationsHistoryUseCase(calculationRepository),
-        addCalculationHistoryUseCase = AddCalculationHistoryUseCase(calculationRepository)
+        addCalculationHistoryUseCase = AddCalculationHistoryUseCase(calculationRepository),
+        getUsersUseCase = GetUsersUseCase(calculationRepository)
     )
 
 
+    // Alert
+
+    @Provides
+    @Singleton
+    fun provideAlertService(client: HttpClient): AlertService =
+        AlertService(client)
+
+    @Provides
+    @Singleton
+    fun provideNotificationsRepository(service: AlertService): NotificationsRepository =
+        NotificationsRepositoryImpl(service)
+
+    @Provides
+    @Singleton
+    fun provideNotificationsUseCases(notificationsRepository: NotificationsRepository): NotificationsUseCases =
+        NotificationsUseCases(
+            getNotifications = GetNotificationsUseCase(notificationsRepository) ,
+            updateNotification = UpdateNotificationUseCase(notificationsRepository)
+        )
 }

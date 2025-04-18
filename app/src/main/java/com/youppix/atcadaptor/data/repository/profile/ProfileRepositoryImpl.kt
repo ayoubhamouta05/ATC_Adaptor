@@ -28,16 +28,19 @@ class ProfileRepositoryImpl(
         email: String,
         phone: String,
         oldPassword: String,
-        newPassword: String,
-        userCustomerId : String
+        newPassword: String
     ): Flow<Resource<StandardResponse>> {
         return profileService.updatePersonalDetails(userId = userId,
             name = name,
             email = email,
             phone =phone,
             oldPassword = oldPassword,
-            newPassword = newPassword,
-            userCustomerId = userCustomerId)
+            newPassword = newPassword
+        )
+    }
+
+    override fun updateUserQrCode(userId : String, imageBase64: String): Flow<Resource<StandardResponse>> {
+        return profileService.updateUserQrCode(userId = userId ,imageBase64 =imageBase64)
     }
 
     override fun checkUserName(userName: String, context: Context): Resource<Boolean> {

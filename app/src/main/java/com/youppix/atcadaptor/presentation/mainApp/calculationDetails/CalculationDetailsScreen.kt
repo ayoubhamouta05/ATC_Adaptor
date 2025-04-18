@@ -1,0 +1,133 @@
+package com.youppix.atcadaptor.presentation.mainApp.calculationDetails
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getNavigatorScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import com.youppix.atcadaptor.common.Dimens.BottomBarHeight
+import com.youppix.atcadaptor.common.Dimens.MediumPadding
+import com.youppix.atcadaptor.common.Dimens.SmallPadding
+import com.youppix.atcadaptor.presentation.components.CustomCircularProgress
+import com.youppix.atcadaptor.presentation.components.CustomTopAppBar
+import com.youppix.atcadaptor.presentation.mainApp.home.HomeScreen
+import com.youppix.atcadaptor.presentation.mainApp.patientDetails.InfoCard
+
+class CalculationDetailsScreen(
+    private val userId: String,
+    private val calculationId: String
+) : Screen {
+    @Composable
+    override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
+        val viewModel = navigator.getNavigatorScreenModel<CalculationDetailsViewModel>()
+        val state by viewModel.state
+        LaunchedEffect(Unit) {
+            viewModel.getCalculationDetails(userId = userId, calculationId = calculationId)
+        }
+
+        Scaffold(
+            topBar = {
+                CustomTopAppBar(title = "Calculation Details", isArabic = false) {
+                    if (navigator.canPop) {
+                        navigator.pop()
+                    } else {
+                        navigator.replaceAll(HomeScreen())
+                    }
+                }
+
+            }
+        ) { innerPadding ->
+
+            if (state.isLoading) {
+                CustomCircularProgress(isLoading = true)
+            } else {
+                state.calculationData?.let { calculation ->
+                    LazyColumn(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                            .padding(MediumPadding)
+
+                            ,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        item {
+                            InfoCard(
+                                title = "Main Information",
+                                subtitle = "Created on ${calculation.created_at ?: "-"}",
+                                items = listOf(
+                                    "Medication" to calculation.nom_de_medicament,
+                                    "Review" to calculation.comment
+                                )
+                            )
+                        }
+
+                        item {
+                            InfoCard(
+                                title = "Patient Information",
+                                items = listOf(
+                                    "Age" to "${calculation.age} years",
+                                    "Weight" to "${calculation.poids} kg",
+                                    "Height" to "${calculation.taille} cm",
+                                    "Gender" to calculation.genre,
+                                    "Race" to calculation.race,
+                                    "Requires Dialysis" to if (calculation.necessite_dialyse == 1) "Yes" else "No",
+                                    "Kidney Toxicity" to if (calculation.toxicite_renale == 1) "Yes" else "No",
+                                    "Hepatic Toxicity" to if (calculation.toxicite_hepatique == 1) "Yes" else "No"
+                                )
+                            )
+                        }
+
+                        item {
+                            InfoCard(
+                                title = "Lab Information",
+                                items = listOf(
+                                    "Creatinine" to calculation.creatinine,
+                                    "ALAT" to calculation.alat,
+                                    "ASAT" to calculation.asat,
+                                    "PAL" to calculation.pal,
+                                    "T.Bil" to calculation.tbil
+                                )
+                            )
+                        }
+
+                        item {
+                            InfoCard(
+                                modifier = Modifier.padding(bottom = BottomBarHeight + SmallPadding),
+                                title = "Calculation & Recommendation",
+                                items = listOf(
+                                    "Body Surface (SC)" to "${calculation.sc} m²",
+                                    "DFG" to calculation.dfg,
+                                    "DFG Calculated" to calculation.dfg_calcule,
+                                    "DFG Type" to calculation.dfg_type,
+                                    "AUC Target" to calculation.auc_cible,
+                                    "Carboplatin Dose" to "${calculation.dose_carboplatine} mg",
+                                    "Recommended Dose" to "${calculation.dose_recommandee} mg",
+                                    "Dose per m²" to "${calculation.dose_par_m2} mg/m²",
+                                    "Recommendation" to calculation.recommandation
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

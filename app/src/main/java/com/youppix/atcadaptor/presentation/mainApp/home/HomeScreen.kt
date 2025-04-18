@@ -15,11 +15,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.youppix.atcadaptor.R
 import com.youppix.atcadaptor.common.Constant
 import com.youppix.atcadaptor.common.Dimens.BottomBarHeight
 import com.youppix.atcadaptor.common.Dimens.ExtraSmallPadding2
@@ -67,7 +69,9 @@ class HomeScreen : Screen {
                         end = MediumPadding,
                         top = MediumPadding,
                         bottom = SmallPadding
-                    ), onTextCleared = {
+                    ),
+                    hint = stringResource(R.string.search),
+                    onTextCleared = {
                     viewModel.onEvent(HomeEvent.UpdateSearchQuery(""))
                 }, onSearchClicked = {
 
@@ -139,7 +143,7 @@ class HomeScreen : Screen {
                     }else{
                         EmptyScreen(
                             state.errorMessage,
-                            if (userType == "1") "il n’y a pas de patient ou de données avec cette requête de recherche" else "il n’y a pas de données avec cette requête de recherche"
+                            if (userType == "1") "there is no patient or data with this search query" else "there is no data with this search query"
                         )
                     }
                 }

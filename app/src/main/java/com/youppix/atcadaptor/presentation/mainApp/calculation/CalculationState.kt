@@ -1,6 +1,7 @@
 package com.youppix.atcadaptor.presentation.mainApp.calculation
 
 import com.youppix.atcadaptor.domain.model.medicament.Medicament
+import com.youppix.atcadaptor.domain.model.user.User
 
 data class CalculationState(
     val isLoading: Boolean = false,
@@ -16,8 +17,12 @@ data class CalculationState(
     val dropNomDeMedicamentMenu: Boolean = false,
 
     val recommendationAndDose : Pair<String,Double> = Pair("" , 0.0),
-
     val medicamentsList : List<Medicament> = emptyList(),
 
-    val comment : String =""
+    val comment : String ="",
+
+    val showUserSelection: Boolean = false,
+    val selectedUser: User? = null,
+    val userSearchQuery: String = "",
+    val userSearchResults: List<User> = emptyList()
 )

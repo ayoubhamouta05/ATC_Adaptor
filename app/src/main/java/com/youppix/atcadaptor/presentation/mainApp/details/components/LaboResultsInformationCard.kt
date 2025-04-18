@@ -38,18 +38,18 @@ fun LaboResultsInformationCard(modifier : Modifier = Modifier, state: DetailsSta
                     .padding(vertical = SmallPadding)
             ) {
                 Text(
-                    "🧪 Résultats de Laboratoire",
+                    "🧪 Lab Results",
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontWeight = FontWeight.Bold
                     ),
                     modifier = Modifier.padding(bottom = SmallPadding)
                 )
-                details.creatinine?.let { Text("🩸 Créatinine : $it mg/dL") }
-                details.dfg?.let { Text("💧 DFG (Débit de Filtration Glomérulaire) : $it mL/min") }
+                details.creatinine?.let { Text("🩸 Creatinine : $it mg/dL") }
+                details.dfg?.let { Text("💧 DFG (Glomerular filtration rate) : $it mL/min") }
                 details.alat?.let { Text("🧬 ALAT (TGP) : $it UI/L") }
                 details.asat?.let { Text("🧬 ASAT (TGO) : $it UI/L") }
-                details.pal?.let { Text("🦴 PAL (Phosphatases Alcalines) : $it UI/L") }
-                details.tbil?.let { Text("🩸 Bilirubine Totale : $it mg/L") }
+                details.pal?.let { Text("🦴 PAL (Alkaline phosphatase) : $it UI/L") }
+                details.tbil?.let { Text("🩸 Total bilirubin(TBIL) : $it mg/L") }
             }
         }
     }

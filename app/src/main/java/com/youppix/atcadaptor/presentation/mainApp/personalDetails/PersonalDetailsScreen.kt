@@ -112,8 +112,7 @@ data class PersonalDetailsScreen(var userData: User, val email: String? = null) 
                         email = state.user.userEmail,
                         phone = state.user.userPhone,
                         oldPassword = state.oldPassword,
-                        newPassword = state.newPassword,
-                        userCustomerId = state.user.userCustomerId?:""
+                        newPassword = state.newPassword
                     )
                 )
                 navigator.pop()
@@ -158,9 +157,7 @@ data class PersonalDetailsScreen(var userData: User, val email: String? = null) 
                                 email = state.user.userEmail,
                                 phone = state.user.userPhone,
                                 oldPassword = state.oldPassword,
-                                newPassword = state.newPassword,
-                                userCustomerId = state.user.userCustomerId?:""
-                            )
+                                newPassword = state.newPassword)
                         )
                     }
                 ) {

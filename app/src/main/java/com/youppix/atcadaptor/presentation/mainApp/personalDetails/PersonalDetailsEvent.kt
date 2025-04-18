@@ -26,7 +26,6 @@ sealed class PersonalDetailsEvent {
         val phone: String,
         val oldPassword: String,
         val newPassword: String,
-        val userCustomerId:String
     ) : PersonalDetailsEvent()
 
     data class CheckEmailAvailability(

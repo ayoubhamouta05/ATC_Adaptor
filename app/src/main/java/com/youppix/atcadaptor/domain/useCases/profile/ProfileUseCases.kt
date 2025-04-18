@@ -15,5 +15,6 @@ data class ProfileUseCases (
     val checkPassword: CheckPasswordUseCase,
     val checkUserName: CheckUserNameUseCase,
     val checkPhone : CheckPhoneUseCase,
-    val checkEmailAvailability : CheckEmailAvailabilityUseCase
+    val checkEmailAvailability : CheckEmailAvailabilityUseCase ,
+    val updateUserQrCode : UpdateUserQrCodeUseCase
 )

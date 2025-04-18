@@ -5,8 +5,9 @@ import com.youppix.atcadaptor.data.remote.calculation.CalculationService
 import com.youppix.atcadaptor.data.remote.calculation.dto.GetCalculationByIdResponse
 import com.youppix.atcadaptor.data.remote.calculation.dto.GetCalculationsHistoryResponse
 import com.youppix.atcadaptor.data.remote.calculation.dto.GetMedicamentResponse
+import com.youppix.atcadaptor.data.remote.calculation.dto.GetUsersResponse
 import com.youppix.atcadaptor.data.remote.dto.StandardResponse
-import com.youppix.atcadaptor.domain.model.calculations.CalculationHistoryData
+import com.youppix.atcadaptor.domain.model.calculations.CalculationData
 import com.youppix.atcadaptor.domain.repository.calculation.CalculationRepository
 import kotlinx.coroutines.flow.Flow
 
@@ -14,6 +15,10 @@ class CalculationRepositoryImpl(private val calculationService: CalculationServi
     CalculationRepository {
     override fun getMedicament(): Flow<Resource<GetMedicamentResponse>> {
         return calculationService.getMedicaments()
+    }
+
+    override fun getUsers(searchQuery: String): Flow<Resource<GetUsersResponse>> {
+        return calculationService.getUsers(searchQuery)
     }
 
     override fun getCalculationsHistory(userId: String): Flow<Resource<GetCalculationsHistoryResponse>> {
@@ -27,7 +32,7 @@ class CalculationRepositoryImpl(private val calculationService: CalculationServi
         return calculationService.getCalculationById(userId = userId, calculationId = calculationId)
     }
 
-    override fun addCalculationHistory(calculationHistoryData: CalculationHistoryData): Flow<Resource<StandardResponse>> {
-        return calculationService.saveCalculationHistory(calculationHistoryData)
+    override fun addCalculationHistory(calculationData: CalculationData): Flow<Resource<StandardResponse>> {
+        return calculationService.saveCalculationHistory(calculationData)
     }
 }

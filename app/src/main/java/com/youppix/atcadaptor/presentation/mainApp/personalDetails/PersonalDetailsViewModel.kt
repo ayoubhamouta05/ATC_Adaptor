@@ -138,7 +138,6 @@ class PersonalDetailsViewModel @Inject constructor(
                                                 phone,
                                                 oldPassword,
                                                 newPassword,
-                                                userCustomerId
                                             )
                                         }
                                     }
@@ -155,8 +154,7 @@ class PersonalDetailsViewModel @Inject constructor(
                                             email,
                                             phone,
                                             "",
-                                            "",
-                                            userCustomerId
+                                            ""
                                         )
                                     }
                                 }
@@ -227,8 +225,7 @@ class PersonalDetailsViewModel @Inject constructor(
         email: String,
         phone: String,
         oldPassword: String,
-        newPassword: String,
-        userCustomerId: String,
+        newPassword: String
     ) {
 
         profileUseCases.updatePersonalDetails(
@@ -237,8 +234,7 @@ class PersonalDetailsViewModel @Inject constructor(
             email = email,
             phone = phone,
             oldPassword = oldPassword,
-            newPassword = newPassword,
-            userCustomerId = userCustomerId
+            newPassword = newPassword
         ).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
@@ -286,9 +282,7 @@ class PersonalDetailsViewModel @Inject constructor(
             it("userName", user.userName)
             it("userEmail", user.userEmail)
             it("userPhone", user.userPhone)
-            user.userCustomerId?.let {
-                it("userCustomerId", user.userCustomerId)
-            }
+
         }
 
     }

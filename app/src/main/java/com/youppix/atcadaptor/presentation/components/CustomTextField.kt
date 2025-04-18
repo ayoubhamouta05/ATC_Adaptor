@@ -16,12 +16,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 import com.youppix.atcadaptor.R
 import com.youppix.atcadaptor.common.Dimens
 import com.youppix.atcadaptor.common.Dimens.SmallPadding
@@ -115,14 +119,17 @@ fun ColumnScope.CustomTextField(
     keyboardActions: KeyboardActions = KeyboardActions(),
     keyboardOptions: KeyboardOptions = KeyboardOptions(),
     isError: Boolean,
-    errorMessage: String = ""
+    errorMessage: String = "",
+    maxLines : Int = 1
 ) {
+
     OutlinedTextField(
         modifier = modifier
             .align(Alignment.CenterHorizontally)
             .fillMaxWidth()
         ,
         value = value,
+        maxLines = maxLines,
         label = {
             Text(text = label , style = MaterialTheme.typography.bodyMedium)
         },
@@ -131,8 +138,8 @@ fun ColumnScope.CustomTextField(
                 color = colorResource(id = R.color.body)
             ))
         },
-        shape = RoundedCornerShape(40),
-        singleLine = true,
+        shape = RoundedCornerShape(SmallPadding),
+        singleLine = maxLines == 1 ,
         trailingIcon = trailingIcon,
         onValueChange = { newValue ->
             onValueChange(newValue)
@@ -146,7 +153,8 @@ fun ColumnScope.CustomTextField(
                 text = errorMessage,
                 color = MaterialTheme.colorScheme.error
             )
-        }} else null
+        }} else null ,
+
     )
 }
 

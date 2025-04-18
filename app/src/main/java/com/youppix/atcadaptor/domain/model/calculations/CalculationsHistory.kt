@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CalculationsHistory(
     val calculation_id: Int,
-    val created_at: String
+    val created_at: String,
+    val nom_de_medicament : String
 )

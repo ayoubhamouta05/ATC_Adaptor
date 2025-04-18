@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetMedicamentResponse(
-    val data: List<Medicament>,
+    val data: List<Medicament>?=null,
     val message: String,
     val status: String
 )

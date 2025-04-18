@@ -42,13 +42,13 @@ fun MedicationInformationCard(modifier : Modifier = Modifier, state: DetailsStat
                     ),
                     modifier = Modifier.padding(bottom = SmallPadding)
                 )
-                details.medicationName?.let { Text("🏥 Médicament : $it") }
+                details.medicationName?.let { Text("🏥 Medication : $it") }
                 details.dose?.let { Text("💉 Dose : $it mg") }
-                details.auc?.let { Text("🔬 Cible AUC : $it") }
-                details.toxicityRenal?.let { Text("🚨 Toxicité Rénale : $it") }
-                details.toxicityHepatic?.let { Text("🚨 Toxicité Hépatique : $it") }
+                details.auc?.let { Text("🔬 Target AUC : $it") }
+                details.toxicityRenal?.let { Text("🚨 Kidney toxicity : $it") }
+                details.toxicityHepatic?.let { Text("🚨 Hepatic toxicity : $it") }
                 details.dialysisRequired?.let {
-                    Text("🩺 Dialyse Requise : ${if (it == 1) "Oui" else "Non"}")
+                    Text("🩺 Dialysis Required : ${if (it == 1) "Yes" else "No"}")
                 }
             }
         }

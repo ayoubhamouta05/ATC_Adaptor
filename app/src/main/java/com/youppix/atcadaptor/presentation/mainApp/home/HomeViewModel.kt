@@ -86,7 +86,7 @@ class HomeViewModel @Inject constructor(
 
 
     suspend fun search(searchQuery: String , userType : Int) {
-        homeUseCases.search(searchQuery , userType).onEach { result ->
+        homeUseCases.search(searchQuery, userType).onEach { result ->
 
             when (result) {
                 is Resource.Loading -> {

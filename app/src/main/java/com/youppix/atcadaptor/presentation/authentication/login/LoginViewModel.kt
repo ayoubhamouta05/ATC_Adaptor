@@ -6,6 +6,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.google.firebase.messaging.FirebaseMessaging
 import com.youppix.atcadaptor.common.Resource
 import com.youppix.atcadaptor.domain.model.user.User
 import com.youppix.atcadaptor.domain.model.user.toUser
@@ -169,9 +170,10 @@ class LoginViewModel @Inject constructor(
                 
                 it("userType" , user.userType.toString())
                 it("subscribeToTopics" , true.toString())
+                it("userQrImage" , user.userQrImage)
             }
-//            FirebaseMessaging.getInstance().subscribeToTopic("users")
-//            FirebaseMessaging.getInstance().subscribeToTopic(user.userId.toString())
+            FirebaseMessaging.getInstance().subscribeToTopic("patients")
+            FirebaseMessaging.getInstance().subscribeToTopic(user.userId.toString())
         }
 
     }

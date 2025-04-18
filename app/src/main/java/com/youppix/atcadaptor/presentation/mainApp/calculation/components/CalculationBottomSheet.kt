@@ -7,48 +7,59 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.youppix.atcadaptor.R
 import com.youppix.atcadaptor.common.Constant.APP_ENTRY
 import com.youppix.atcadaptor.common.Constant.format
-import com.youppix.atcadaptor.common.Dimens.BottomBarHeight
 import com.youppix.atcadaptor.common.Dimens.ExtraSmallPadding
-import com.youppix.atcadaptor.common.Dimens.LargePadding
 import com.youppix.atcadaptor.common.Dimens.MediumPadding
+import com.youppix.atcadaptor.common.Dimens.SearchBarHeight
 import com.youppix.atcadaptor.common.Dimens.SmallPadding
-import com.youppix.atcadaptor.domain.model.calculations.CalculationHistoryData
+import com.youppix.atcadaptor.domain.model.calculations.CalculationData
+import com.youppix.atcadaptor.presentation.components.CustomCircularProgress
 import com.youppix.atcadaptor.presentation.components.CustomTextField
 import com.youppix.atcadaptor.presentation.mainApp.calculation.CalculationEvent
 import com.youppix.atcadaptor.presentation.mainApp.calculation.CalculationInputState
 import com.youppix.atcadaptor.presentation.mainApp.calculation.CalculationState
+import com.youppix.atcadaptor.presentation.mainApp.components.CustomSearchBar
+import com.youppix.atcadaptor.presentation.mainApp.components.EmptyContent
+import com.youppix.atcadaptor.presentation.mainApp.components.EmptyScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,167 +70,311 @@ fun CalculationBottomSheet(
     event: (CalculationEvent) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true, confirmValueChange = {
+        it != SheetValue.Hidden
+    })
 
     val imeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
 
     val context = LocalContext.current
     val userId = context.getSharedPreferences(APP_ENTRY, 0).getString("userId", "")
 
+    val scrollState = rememberScrollState()
+
+
     ModalBottomSheet(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = BottomBarHeight),
+            .padding(top = SearchBarHeight),
         onDismissRequest = { onDismissRequest() },
         containerColor = MaterialTheme.colorScheme.background,
         sheetState = sheetState
     ) {
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(SmallPadding),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+
+        Scaffold(topBar = {
             Text(
-                text = "Résultats",
+                text = stringResource(R.string.result),
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
+                textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(bottom = MediumPadding)
-            )
-
-
-
-            AnimatedVisibility(!imeVisible) {
-                Card(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .padding(ExtraSmallPadding),
-
-                    shape = RoundedCornerShape(SmallPadding),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
-
-
-                ) {
-                    val (recommendation, recommendedDose) = state.recommendationAndDose
-                    Log.d("CalcultaionBottomSheet", "recommendation :" + recommendation)
-                    Column(
-                        modifier = Modifier.padding(MediumPadding)
-                    ) {
-                        ResultRow(
-                            label = "Surface corporelle (SC)",
-                            value = "${inputState.sc.format(2)} m²"
-                        )
-                        ResultRow(
-                            label = "DFG calculé",
-                            value = "${inputState.dfgCalcule.format(2)} mL/min"
-                        )
-                        ResultRow(
-                            label = "Dose de carboplatine",
-                            value = "${inputState.doseCarboplatine.format(2)} mg"
-                        )
-                        ResultRow(
-                            label = "Recommandation selon la ligne directrice (RCP) :",
-                            value = recommendation
-                        )
-                        ResultRow(
-                            label = "Dose individuelle recommandée: ",
-                            value = "${recommendedDose.format(2)} mg"
-                        )
-                    }
-                }
-            }
-
-
-            Spacer(modifier = Modifier.height(MediumPadding))
-
-            CustomTextField(
-                modifier = Modifier.padding(SmallPadding),
-                value = state.comment,
-                onValueChange = {
-                    event(CalculationEvent.OnCommentValueChange(it))
-                },
-                label = "commentaire",
-                trailingIcon = {},
-                placeholder = "laissez un commentaire",
-                isError = false,
-                errorMessage = ""
-            )
-
-            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = SmallPadding)
-            ) {
+            )
+        },
+            bottomBar = {
+                if (!state.showUserSelection) {
+                    Column(Modifier.padding(bottom = SmallPadding)) {
+                        Button(
+                            onClick = {
+                                inputState.apply {
+                                    event(
+                                        CalculationEvent.SaveCalculation(
+                                            context, CalculationData(
+                                                user_id = 1,
+                                                calculated_by = if (userId.isNullOrEmpty()) 0 else userId.toInt(),
+                                                nom_de_medicament = nomDeMedicament,
+                                                age = age.toInt(),
+                                                poids = poids,
+                                                taille = taille,
+                                                genre = genre.name,
+                                                race = race.name,
+                                                creatinine = creatinine,
+                                                alat = alat,
+                                                asat = asat,
+                                                pal = pal,
+                                                tbil = tbil,
+                                                dfg_type = dfgType.name,
+                                                dfg = dfg,
+                                                dfg_calcule = dfgCalcule,
+                                                auc_cible = aucCible,
+                                                dose_carboplatine = doseCarboplatine,
+                                                dose_par_m2 = doseParM2,
+                                                toxicite_renale = if (toxiciteRenale) 1 else 0,
+                                                toxicite_hepatique = if (toxiciteHepatique) 1 else 0,
+                                                necessite_dialyse = if (necessiteDialyse) 1 else 0,
+                                                sc = sc,
+                                                recommandation = state.recommendationAndDose.first,
+                                                dose_recommandee = state.recommendationAndDose.second.toString(),
+                                                comment = state.comment
+                                            )
+                                        )
+                                    )
+                                }
 
-            }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = MediumPadding, vertical = SmallPadding)
+                                .height(50.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.save),
+                                fontSize = 16.sp,
+                                color = Color.White
+                            )
+                        }
 
-            Spacer(modifier = Modifier.height(MediumPadding))
+                        Button(
+                            onClick = { onDismissRequest() },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = MediumPadding)
+                                .height(50.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.close),
+                                fontSize = 16.sp,
+                                color = Color.White
+                            )
+                        }
 
-            Button(
-                onClick = {
-                    inputState.apply {
-                        event(
-                            CalculationEvent.SaveCalculation(
-                                context,
-                                CalculationHistoryData(
-                                    user_id = 1,
-                                    calculated_by = if (userId.isNullOrEmpty()) 0 else userId.toInt(),
-                                    nom_de_medicament = nomDeMedicament,
-                                    age = age.toInt(),
-                                    poids = poids,
-                                    taille = taille,
-                                    genre = genre.name,
-                                    race = race.name,
-                                    creatinine = creatinine,
-                                    alat = alat,
-                                    asat = asat,
-                                    pal = pal,
-                                    tbil = tbil,
-                                    dfg_type = dfgType.name,
-                                    dfg = dfg,
-                                    dfg_calcule = dfgCalcule,
-                                    auc_cible = aucCible,
-                                    dose_carboplatine = doseCarboplatine,
-                                    dose_par_m2 = doseParM2,
-                                    toxicite_renale = if(toxiciteRenale) 1 else 0,
-                                    toxicite_hepatique = if(toxiciteHepatique) 1 else 0,
-                                    necessite_dialyse = if(necessiteDialyse) 1 else 0,
-                                    sc = sc,
-                                    recommandation = state.recommendationAndDose.first,
-                                    dose_recommandee = state.recommendationAndDose.second.toString(),
-                                    comment = state.comment
+                    }
+                }
+            })
+        { innerPadding ->
+
+            if (state.showUserSelection) {
+
+                Scaffold(modifier = Modifier.fillMaxSize().padding(innerPadding)
+                    .padding(bottom = SmallPadding), topBar = {
+                    CustomSearchBar(value = state.userSearchQuery,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding( SmallPadding),
+                        hint = stringResource(R.string.search),
+                        onTextCleared = {
+                            event(CalculationEvent.OnUserSearchQueryChange(""))
+                        },
+                        onSearchClicked = {},
+                        onTextChange = {
+                            event(CalculationEvent.OnUserSearchQueryChange(it))
+                        },
+                        isEnabled = true,
+                        onBoxCLicked = {})
+                }, bottomBar = {
+                    Button(
+                        onClick = { event(CalculationEvent.ToggleShowUserSelection) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = MediumPadding)
+                            .height(50.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.cancel),
+                            fontSize = 16.sp,
+                            color = Color.White
+                        )
+                    }
+                }) { innerPadding2 ->
+
+                    if (state.isLoading) {
+                        CustomCircularProgress(state.isLoading)
+                    } else if (state.userSearchResults.isEmpty()){
+                        EmptyContent(alphaAnim = 0.1f, iconId =  R.drawable.ic_search_document,message = "Invalid User.") {}
+                    } else {
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(innerPadding2)
+
+                        ) {
+                            LazyColumn(
+                                modifier.padding(
+                                    vertical = SmallPadding
                                 )
+                            ) {
+                                items(state.userSearchResults.size, key = { it }) { index ->
+                                    Card(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(SmallPadding)
+                                            .clip(RoundedCornerShape(SmallPadding))
+                                            .clickable {
+                                                event(
+                                                    CalculationEvent.OnUserSelected(
+                                                        state.userSearchResults[index]
+                                                    )
+                                                )
+                                            },
+                                        shape = RoundedCornerShape(SmallPadding),
+                                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                                        colors = CardDefaults.cardColors(containerColor = Color.White)
+                                    ) {
+
+                                        ListItem(headlineContent = {
+                                            Text(
+                                                state.userSearchResults[index].userName,
+                                                style = MaterialTheme.typography.titleSmall
+                                            )
+                                        }, supportingContent = {
+                                            Text(
+                                                "ID: ${state.userSearchResults[index].userId} | ${state.userSearchResults[index].userEmail}",
+                                                style = MaterialTheme.typography.bodyMedium
+                                            )
+                                        }, colors = ListItemDefaults.colors(
+                                            containerColor = Color.Transparent
+                                        )
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+
+
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(innerPadding)
+                        .padding(SmallPadding)
+                        .verticalScroll(scrollState),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    AnimatedVisibility(!imeVisible) {
+                        Card(
+                            modifier = modifier
+                                .fillMaxWidth()
+                                .padding(ExtraSmallPadding),
+                            shape = RoundedCornerShape(SmallPadding),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White)
+                        ) {
+                            val (recommendation, recommendedDose) = state.recommendationAndDose
+                            Log.d("CalcultaionBottomSheet", "recommendation :" + recommendation)
+                            Column(
+                                modifier = Modifier.padding(MediumPadding)
+                            ) {
+                                ResultRow(
+                                    label = "Surface corporelle (SC)",
+                                    value = "${inputState.sc.format(2)} m²"
+                                )
+                                ResultRow(
+                                    label = "DFG calculé",
+                                    value = "${inputState.dfgCalcule.format(2)} mL/min"
+                                )
+                                ResultRow(
+                                    label = "Dose de carboplatine",
+                                    value = "${inputState.doseCarboplatine.format(2)} mg"
+                                )
+                                ResultRow(
+                                    label = "Recommandation selon la ligne directrice (RCP) :",
+                                    value = recommendation
+                                )
+                                ResultRow(
+                                    label = "Dose individuelle recommandée: ",
+                                    value = "${recommendedDose.format(2)} mg"
+                                )
+                            }
+                        }
+                    }
+
+                    CustomTextField(
+                        modifier = Modifier.padding(top = SmallPadding,end =SmallPadding , start = SmallPadding),
+                        value = state.comment,
+                        onValueChange = {
+                            event(CalculationEvent.OnCommentValueChange(it))
+                        },
+                        label = stringResource(R.string.review),
+                        trailingIcon = {},
+                        placeholder = stringResource(R.string.leaveReview),
+                        isError = false,
+                        errorMessage = "",
+                        maxLines = Int.MAX_VALUE
+                    )
+                    TextButton(modifier = Modifier.padding(horizontal = SmallPadding), onClick = {
+                        event(CalculationEvent.ToggleShowUserSelection)
+                    }) {
+                        Text(
+                            stringResource(R.string.selectPatient),
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                textDecoration = TextDecoration.Underline,
+                                fontWeight = FontWeight.Bold
                             )
                         )
                     }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = MediumPadding, vertical = SmallPadding)
-                    .height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-            ) {
-                Text(text = stringResource(R.string.save), fontSize = 16.sp, color = Color.White)
+
+                    if(state.selectedUser!=null) {
+                        Card(
+                            modifier = modifier
+                                .fillMaxWidth()
+                                .padding(start = SmallPadding, end = SmallPadding, bottom = SmallPadding,),
+                            shape = RoundedCornerShape(SmallPadding),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White)
+                        ) {
+
+                            ListItem(headlineContent = {
+                                Text(
+                                    state.selectedUser.userName,
+                                    style = MaterialTheme.typography.titleSmall
+                                )
+                            }, supportingContent = {
+                                Text(
+                                    "ID: ${state.selectedUser.userId} | ${state.selectedUser.userEmail}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }, colors = ListItemDefaults.colors(
+                                containerColor = Color.Transparent
+                            )
+                            )
+                        }
+                    }
+                }
+
             }
-
-            Button(
-                onClick = { onDismissRequest() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = MediumPadding)
-                    .height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-            ) {
-                Text(text = stringResource(R.string.close), fontSize = 16.sp, color = Color.White)
-            }
-
-            Spacer(modifier = Modifier.height(BottomBarHeight))
-
-
         }
+
+
     }
 }
 

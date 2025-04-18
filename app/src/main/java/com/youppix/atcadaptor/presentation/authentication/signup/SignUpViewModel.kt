@@ -1,15 +1,24 @@
 package com.youppix.atcadaptor.presentation.authentication.signup
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.util.Base64
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.common.BitMatrix
+import com.youppix.atcadaptor.common.Constant.bitmapToBase64
+import com.youppix.atcadaptor.common.Constant.generateQRCode
 import com.youppix.atcadaptor.common.Resource
 import com.youppix.atcadaptor.domain.useCases.signUp.SignUpUseCases
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 
@@ -156,7 +165,12 @@ class SignUpViewModel @Inject constructor(
     }
 
     suspend fun addUser(name: String, email: String, phone: String, password: String , userType : Int) {
-        signUpUseCases.addUser(name, email, phone, password , userType).onEach { result ->
+
+        val content = "$name|$email|$phone"
+        val qrBitmap = generateQRCode(content)
+        val imageBase64 = bitmapToBase64(qrBitmap)
+
+        signUpUseCases.addUser(name, email, phone, password , userType,imageBase64).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
                     _signUpState.value = signUpState.value.copy(
@@ -216,5 +230,11 @@ class SignUpViewModel @Inject constructor(
             signUpErrorMessage = null
         )
     }
+
+
+
+
+
+
 
 }

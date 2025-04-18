@@ -43,7 +43,7 @@ import com.youppix.atcadaptor.common.Dimens.SmallPadding
 fun CustomSearchBar(
     modifier: Modifier = Modifier,
     value: String,
-    hint: String = "Chercher",
+    hint: String,
     isEnabled: (Boolean) = true,
     height: Dp = SearchBarHeight,
     elevation: Dp = ExtraSmallPadding2,

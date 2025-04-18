@@ -6,6 +6,7 @@ plugins {
     id ("kotlin-kapt")
     alias(libs.plugins.serialization)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -54,6 +55,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.storage)
+    implementation(libs.firebase.messaging.ktx)
+    implementation(libs.firebase.inappmessaging.display)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -97,5 +100,8 @@ dependencies {
     //qr code generator / scanner
     implementation (libs.core)
     implementation (libs.zxing.android.embedded)
+
+    //Firebase
+    implementation(platform(libs.firebase.bom))
 
 }

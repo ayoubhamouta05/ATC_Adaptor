@@ -157,8 +157,8 @@
     <string name="enterYourAddress">أدخل عنوانك</string>
     <string name="specificAddressEmptyErrorMsg">الرجاء ادخال العنوان</string>
     <string name="addressNameEmptyErrorMsg">الرجاء ادخال الاسم</string>
-    <string name="pleaseSelectWilayaErrorMsg">يرجى ادخال الولاية</string>
-    <string name="pleaseSelectCommuneErrorMsg">يرجى ادخال البلدية</string>
+
+
     <string name="codePostalEmptyErrorMsg">الرجاء ادخال الرمز البريدي</string>
     <string name="codePostalWrongErrorMsg">الرمز البريدي خاطئ</string>
     <string name="thankYouForYourConfidence">نشكركم على ثقتكم</string>
@@ -175,7 +175,7 @@
     <string name="orderDetails">تفاصيل الطلب</string>
     <string name="youDontHaveAnyOrders">ليس لديك أي طلبات %1$s حتى الآن!</string>
     <string name="at">على : %1$s</string>
-    <string name="youHaveUnreadNotifications">لديك إشعارات غير مقروءة</string>
+
     <string name="notificationPermissionDeniedMessage">يرجى تمكين إذن الإشعارات من الإعدادات,\nاضغط مطولا للانتقال إلى إعدادات الإشعارات</string>
     <string name="invalidPromoCodeErrorMessage">الرمز الترويجي غير صالح </string>
     <string name="edit">تعديل</string>

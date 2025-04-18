@@ -29,7 +29,7 @@ class DetailsViewModel @Inject constructor(
     }
 
     private suspend fun getDetails(medicationName: String, patientId: Int? = null) {
-        detailsUseCases.getDetails(medicationName, patientId).onEach { result ->
+        detailsUseCases.getDetailsUseCase(medicationName, patientId).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
                     _state.value = DetailsState(isLoading = true)

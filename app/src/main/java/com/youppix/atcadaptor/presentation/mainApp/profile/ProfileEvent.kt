@@ -11,5 +11,6 @@ sealed class ProfileEvent {
     data object HideDialog : ProfileEvent()
     data class ToggleNotification(val value : Boolean) : ProfileEvent()
     data class GetUserData(val context : Context) : ProfileEvent()
+    data object UpdateUserQrCode : ProfileEvent()
 
 }

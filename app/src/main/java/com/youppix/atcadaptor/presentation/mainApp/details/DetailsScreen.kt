@@ -3,33 +3,22 @@ package com.youppix.atcadaptor.presentation.mainApp.details
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.youppix.atcadaptor.common.Dimens.BottomBarHeight
-import com.youppix.atcadaptor.common.Dimens.ExtraSmallPadding
 import com.youppix.atcadaptor.common.Dimens.ExtraSmallPadding2
-import com.youppix.atcadaptor.common.Dimens.MediumPadding
 import com.youppix.atcadaptor.common.Dimens.SmallPadding
 import com.youppix.atcadaptor.common.UserRole
 import com.youppix.atcadaptor.presentation.components.CustomCircularProgress
@@ -37,6 +26,7 @@ import com.youppix.atcadaptor.presentation.components.CustomTopAppBar
 import com.youppix.atcadaptor.presentation.mainApp.details.components.LaboResultsInformationCard
 import com.youppix.atcadaptor.presentation.mainApp.details.components.MedicationInformationCard
 import com.youppix.atcadaptor.presentation.mainApp.details.components.PatientInformationCard
+import com.youppix.atcadaptor.presentation.mainApp.patientDetails.PatientDetailsScreen
 
 class DetailsScreen(
     private val userRole: UserRole,
@@ -76,7 +66,11 @@ class DetailsScreen(
                 } else {
                     // Patient Information (Visible for Doctors Only)
                     if (userRole == UserRole.Doctor) {
-                        PatientInformationCard(modifier = Modifier.padding(top = SmallPadding), state = state)
+                        PatientInformationCard(modifier = Modifier.padding(top = SmallPadding), state = state){
+                            state.detailsData?.patientId?.let {
+                                navigator.push(PatientDetailsScreen(it))
+                            }
+                        }
                         Spacer(modifier = Modifier.height(16.dp))
                     }
 

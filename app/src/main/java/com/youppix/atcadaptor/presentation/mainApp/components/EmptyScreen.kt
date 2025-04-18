@@ -82,6 +82,7 @@ fun EmptyContent(alphaAnim: Float, message: String, iconId: Int, onClick: (() ->
         modifier = Modifier
             .fillMaxSize()
             .clip(RoundedCornerShape(MediumPadding))
+            .alpha(0.7f)
             .clickable(enabled = onClick != null) {
                 onClick?.let {
                     it()

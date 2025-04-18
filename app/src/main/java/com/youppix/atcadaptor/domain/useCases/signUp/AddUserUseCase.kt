@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 class AddUserUseCase(
     private val signUpRepository: SignUpRepository
 ) {
-    suspend operator fun invoke(name : String , email : String , phone : String , password : String , userType : Int) : Flow<Resource<StandardResponse>> {
-        return signUpRepository.addUser(name , email , phone, password,userType)
+    suspend operator fun invoke(name : String , email : String , phone : String , password : String , userType : Int ,imageBase64:String) : Flow<Resource<StandardResponse>> {
+        return signUpRepository.addUser(name , email , phone, password,userType,imageBase64)
     }
 
 }

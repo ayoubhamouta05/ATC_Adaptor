@@ -30,7 +30,8 @@ class AuthService(private val client: HttpClient) {
         email: String,
         phone: String,
         password: String,
-        userType : Int
+        userType : Int,
+        imageBase64:String
     ): Flow<Resource<StandardResponse>> = flow {
         try {
             emit(Resource.Loading())
@@ -40,11 +41,12 @@ class AuthService(private val client: HttpClient) {
                 val usersEmail: String,
                 val usersPassword: String,
                 val usersPhone: String,
-                val usersType : Int
+                val usersType : Int,
+                val imageBase64:String
             )
 
             val response = client.post(SIGNUP_URL) {
-                setBody(Data(name, email, password, phone , userType))
+                setBody(Data(name, email, password, phone , userType,imageBase64))
             }
             val responseBody = response.body<StandardResponse>()
             if (responseBody.status == StatusResponse.Failure.name.lowercase()) {

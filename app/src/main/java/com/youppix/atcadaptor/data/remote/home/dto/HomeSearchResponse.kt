@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class HomeSearchResponse(
-    val data: List<HomeSearchItemData>? = emptyList(),
+    val data: List<HomeSearchItemData>? = null,
     val message: String,
     val status: String
 )

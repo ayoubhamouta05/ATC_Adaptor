@@ -18,8 +18,13 @@ interface ProfileRepository {
         email: String,
         phone: String,
         oldPassword: String,
-        newPassword: String,
-        userCustomerId : String
+        newPassword: String
+    ): Flow<Resource<StandardResponse>>
+
+     fun updateUserQrCode(
+         userId : String,
+        imageBase64 : String
+
     ): Flow<Resource<StandardResponse>>
 
     fun checkUserName(userName : String , context: Context) : Resource<Boolean>
@@ -28,5 +33,6 @@ interface ProfileRepository {
     fun checkPassword(password : String,context: Context) : Resource<Boolean>
 
     suspend fun checkEmailAvailability(userId : Int , email : String ) : Flow<Resource<StandardResponse>>
+
 
 }

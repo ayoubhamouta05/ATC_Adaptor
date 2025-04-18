@@ -2,6 +2,9 @@ package com.youppix.atcadaptor.presentation.mainApp.scanner
 
 sealed class ScannerScreenEvent {
     data class SaveAppEntry(val value: String) : ScannerScreenEvent()
-    data class SwitchScannerScreen(val value: Boolean) : ScannerScreenEvent()
+
+    data class GetPatientData(val name: String, val email: String, val phone: String) :
+        ScannerScreenEvent()
+
     data object ToggleNeedToBeLoggedBottomSheet : ScannerScreenEvent()
 }

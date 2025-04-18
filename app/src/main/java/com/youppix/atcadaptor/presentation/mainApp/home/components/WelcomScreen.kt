@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -48,6 +49,7 @@ fun WelcomeScreen(modifier: Modifier = Modifier) {
                     painter = painterResource(id = R.drawable.atc_logo),
                     contentDescription = null,
                     modifier = Modifier.size(150.dp),
+                    contentScale = ContentScale.Fit,
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
                 )
                 Column(
@@ -63,7 +65,7 @@ fun WelcomeScreen(modifier: Modifier = Modifier) {
                             )
                     )
                     Text(
-                        text = "Votre guide pour un dosage personnalisé des médicaments",
+                        text = "Your guide to personalized medication dosage",
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.offset(y = -ExtraSmallPadding)
                     )
@@ -73,8 +75,8 @@ fun WelcomeScreen(modifier: Modifier = Modifier) {
         item {
             FeatureItem(
                 icon = R.drawable.ic_patient_data, // Remplacer par vos icônes
-                title = "Infos Patient",
-                description = "Saisissez et gérez les données médicales du patient."
+                title = "Patient Info",
+                description = "Enter and manage patient medical data."
             )
         }
 
@@ -82,16 +84,16 @@ fun WelcomeScreen(modifier: Modifier = Modifier) {
             FeatureItem(
                 modifier = Modifier.padding(vertical = SmallPadding),
                 icon = R.drawable.ic_dosage, // Remplacer par vos icônes
-                title = "Données de dose",
-                description = "Consultez les médicaments et leurs dosages."
+                title = "Drug dose data",
+                description = "Consult medications and their dosages."
             )
         }
         item {
             FeatureItem(
                 modifier = Modifier.padding(bottom = BottomBarHeight + MediumPadding),
                 icon = R.drawable.ic_dosage_calc, // Remplacer par vos icônes
-                title = "Calcul de Dose",
-                description = "Calculez facilement la dose selon les données du patient."
+                title = "Dose calculations",
+                description = "Easily calculate dose based on patient data."
             )
         }
     }

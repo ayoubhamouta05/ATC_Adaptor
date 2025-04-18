@@ -1,5 +1,6 @@
 package com.youppix.atcadaptor.domain.useCases.details
 
 data class DetailsUseCases(
-    val getDetails : GetDetailsUseCase
+    val getDetailsUseCase : GetDetailsUseCase,
+    val getPatientDataUseCase: GetPatientDataUseCase
 )

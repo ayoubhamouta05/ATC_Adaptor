@@ -1,10 +1,11 @@
 package com.youppix.atcadaptor.presentation.mainApp.calculation
 
 import android.content.Context
-import com.youppix.atcadaptor.domain.model.calculations.CalculationHistoryData
+import com.youppix.atcadaptor.domain.model.calculations.CalculationData
+import com.youppix.atcadaptor.domain.model.user.User
 
 sealed class CalculationEvent {
-    data object OnCalculate : CalculationEvent()
+    data class OnCalculate(val context: Context) : CalculationEvent()
     data object InitializeErrorMessage : CalculationEvent()
     data object ToggleGenreDropMenu : CalculationEvent()
     data object ToggleRaceDropMenu : CalculationEvent()
@@ -18,8 +19,13 @@ sealed class CalculationEvent {
     data object GetMedicament : CalculationEvent()
 
     data class  OnCommentValueChange (val value : String) : CalculationEvent()
-    data class  SaveCalculation (val context : Context , val calculationHistoryData: CalculationHistoryData) : CalculationEvent()
+    data class  SaveCalculation (val context : Context , val calculationData: CalculationData) : CalculationEvent()
     data class  ShowToast (val context: Context,val message: String ) : CalculationEvent()
 
+
+    data object ToggleShowUserSelection : CalculationEvent()
+    data class OnUserSearchQueryChange(val query: String) : CalculationEvent()
+    data class OnSearch(val query: String) : CalculationEvent()
+    data class OnUserSelected(val user: User) : CalculationEvent()
 
 }

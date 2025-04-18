@@ -1,26 +1,19 @@
 package com.youppix.atcadaptor.presentation.mainApp.profile
 
-import android.content.ContentResolver
-import android.content.Context
-import android.net.Uri
-import android.webkit.MimeTypeMap
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
-
+import com.google.firebase.messaging.FirebaseMessaging
 import com.youppix.atcadaptor.common.Constant.APP_ENTRY
-import com.youppix.atcadaptor.common.Constant.APP_LANG
+import com.youppix.atcadaptor.common.Constant.bitmapToBase64
+import com.youppix.atcadaptor.common.Constant.generateQRCode
 import com.youppix.atcadaptor.common.Resource
 import com.youppix.atcadaptor.domain.useCases.appEntry.AppEntryUseCases
 import com.youppix.atcadaptor.domain.useCases.profile.ProfileUseCases
 import com.youppix.atcadaptor.presentation.components.isNotificationPermissionGranted
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
-import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
 import javax.inject.Inject
 
 class ProfileScreenViewModel @Inject constructor(
@@ -59,14 +52,14 @@ class ProfileScreenViewModel @Inject constructor(
             }
 
             is ProfileEvent.ToggleNotification -> {
-                if(event.value){
-                    profileUseCases.saveUserData("subscribeToTopics" , true.toString())
-//                    FirebaseMessaging.getInstance().subscribeToTopic("users")
-//                    FirebaseMessaging.getInstance().subscribeToTopic(state.value.user.userId.toString())
-                }else{
-                    profileUseCases.saveUserData("subscribeToTopics" , false.toString())
-//                    FirebaseMessaging.getInstance().unsubscribeFromTopic("users")
-//                    FirebaseMessaging.getInstance().unsubscribeFromTopic(state.value.user.userId.toString())
+                if (event.value) {
+                    profileUseCases.saveUserData("subscribeToTopics", true.toString())
+                    FirebaseMessaging.getInstance().subscribeToTopic(if(state.value.user.userType == 0) "patients" else "doctors")
+                    FirebaseMessaging.getInstance().subscribeToTopic(state.value.user.userId.toString())
+                } else {
+                    profileUseCases.saveUserData("subscribeToTopics", false.toString())
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(if(state.value.user.userType == 0) "patients" else "doctors")
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(state.value.user.userId.toString())
                 }
                 _state.value = state.value.copy(
                     isNotificationEnable = event.value
@@ -74,25 +67,26 @@ class ProfileScreenViewModel @Inject constructor(
             }
 
 
-
             is ProfileEvent.GetUserData -> {
                 getUserData()
-                val isNotificationEnable = profileUseCases.getUserData("subscribeToTopics", false.toString()).toBoolean()
-                        && isNotificationPermissionGranted(event.context)
+                val isNotificationEnable =
+                    profileUseCases.getUserData("subscribeToTopics", false.toString()).toBoolean()
+                            && isNotificationPermissionGranted(event.context)
                 _state.value = state.value.copy(
                     isNotificationEnable = isNotificationEnable
                 )
             }
 
-
-
+            ProfileEvent.UpdateUserQrCode -> {
+                updateUserQrCode()
+            }
         }
     }
 
     private fun logout() {
         profileUseCases.saveUserData(APP_ENTRY, "1")
-//        FirebaseMessaging.getInstance().unsubscribeFromTopic("users")
-//        FirebaseMessaging.getInstance().unsubscribeFromTopic(state.value.user.userId.toString())
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(if(state.value.user.userType == 0 ) "patients" else "doctors")
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(state.value.user.userId.toString())
     }
 
     private fun getUserData() {
@@ -100,8 +94,7 @@ class ProfileScreenViewModel @Inject constructor(
         val userName = profileUseCases.getUserData("userName", "")
         val userEmail = profileUseCases.getUserData("userEmail", "")
         val userPhone = profileUseCases.getUserData("userPhone", "")
-        val userImage = profileUseCases.getUserData("userImage", "")
-        val userCustomerId = profileUseCases.getUserData("userCustomerId", "")
+        val userImage = profileUseCases.getUserData("userQrImage", "")
 
         _state.value = state.value.copy(
             user = state.value.user.copy(
@@ -110,15 +103,58 @@ class ProfileScreenViewModel @Inject constructor(
                 userEmail = userEmail.ifEmpty { state.value.user.userEmail },
                 userPhone = userPhone.ifEmpty { state.value.user.userPhone },
                 userImage = userImage.ifEmpty { state.value.user.userName },
-                userCustomerId = userCustomerId.ifEmpty { state.value.user.userCustomerId }
             )
         )
     }
 
-     fun saveAppEntry(value : String){
-        appEntryUseCases.saveAppEntryUseCase(APP_ENTRY , value)
+    fun saveAppEntry(value: String) {
+        appEntryUseCases.saveAppEntryUseCase(APP_ENTRY, value)
     }
 
+    private fun updateUserQrCode() {
+        val imageBase64 = reGenerateQrCode(
+            state.value.user.userName,
+            state.value.user.userEmail,
+            state.value.user.userPhone
+        )
+        profileUseCases.updateUserQrCode(
+            userId = state.value.user.userId.toString(),
+            imageBase64 = imageBase64
+        ).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _state.value = state.value.copy(
+                        isLoading = true
+                    )
+                }
+
+                is Resource.Error -> {
+                    _state.value = state.value.copy(
+                        isLoading = false,
+                        error = result.message ?: result.data?.message ?: "An Unexpected Error"
+                    )
+                }
+
+                is Resource.Successful -> {
+                    _state.value = state.value.copy(
+                        isLoading = false,
+                        error = null,
+                        user = state.value.user.copy(
+                            userImage = imageBase64
+                        )
+                    )
+                    appEntryUseCases.saveAppEntryUseCase("userQrImage" , imageBase64)
+                }
+            }
+        }.launchIn(screenModelScope)
+    }
+
+
+    private fun reGenerateQrCode(name: String, email: String, phone: String): String {
+        val content = "$name|$email|$phone"
+        val qrBitmap = generateQRCode(content)
+        return bitmapToBase64(qrBitmap)
+    }
 
 
 }

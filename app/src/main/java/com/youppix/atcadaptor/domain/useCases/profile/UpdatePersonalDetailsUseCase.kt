@@ -15,16 +15,14 @@ class UpdatePersonalDetailsUseCase(
         email: String,
         phone: String,
         oldPassword: String,
-        newPassword: String,
-        userCustomerId: String
+        newPassword: String
     ): Flow<Resource<StandardResponse>> = profileRepository.updatePersonalDetails(
         userId = userId,
         name = name,
         email = email,
         phone = phone,
         oldPassword = oldPassword,
-        newPassword = newPassword,
-        userCustomerId = userCustomerId
+        newPassword = newPassword
     )
 
 }

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetCalculationByIdResponse(
-    val data: CalculationData,
+    val data: CalculationData?=null,
     val message: String,
     val status: String
 )

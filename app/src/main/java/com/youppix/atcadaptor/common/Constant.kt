@@ -2,7 +2,9 @@ package com.youppix.atcadaptor.common
 
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import android.text.format.DateUtils
+import android.util.Base64
 import android.util.Patterns
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.EventNote
@@ -25,8 +27,12 @@ import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material.icons.outlined.ShoppingBag
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.common.BitMatrix
 import com.youppix.atcadaptor.R
 import com.youppix.atcadaptor.domain.model.bottomBar.BottomBar
+import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -212,5 +218,27 @@ object Constant {
         val blue = random.nextInt(mainBrightness, 256)
         return Color(red, green, blue)
 
+    }
+
+    fun generateQRCode(content: String, size: Int = 512): Bitmap {
+        val bitMatrix: BitMatrix =
+            MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, size, size)
+        val width = bitMatrix.width
+        val height = bitMatrix.height
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                bitmap.setPixel(x, y, if (bitMatrix[x, y]) android.graphics.Color.BLACK else android.graphics.Color.WHITE)
+            }
+        }
+        return bitmap
+    }
+
+    fun bitmapToBase64(bitmap: Bitmap): String {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+        val byteArray = byteArrayOutputStream.toByteArray()
+        return Base64.encodeToString(byteArray, Base64.DEFAULT)
     }
 }

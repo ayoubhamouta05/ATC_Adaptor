@@ -2,6 +2,8 @@ package com.youppix.atcadaptor.presentation.mainApp.calculation
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,6 +45,7 @@ import com.youppix.atcadaptor.presentation.components.CustomTopAppBar
 import com.youppix.atcadaptor.presentation.mainApp.calculation.components.BlockSeparator
 import com.youppix.atcadaptor.presentation.mainApp.calculation.components.CalculationBottomSheet
 import com.youppix.atcadaptor.presentation.mainApp.calculation.components.DropdownMenuLabel
+import com.youppix.atcadaptor.presentation.mainApp.calculationsHistory.CalculationsHistoryScreen
 import com.youppix.atcadaptor.presentation.mainApp.home.HomeScreen
 
 class CalculationScreen : Screen {
@@ -58,17 +62,18 @@ class CalculationScreen : Screen {
             .getString("userType", "0")
 
         LaunchedEffect(Unit) {
+
+            if(userType == "0") {
+                navigator.replace(CalculationsHistoryScreen())
+            }
+
             viewModel.onEvent(CalculationEvent.GetMedicament)
         }
 
-        LaunchedEffect(state.error) {
-            if (state.error != null) {
-                Toast.makeText(context, "error : " + state.error, Toast.LENGTH_SHORT).show()
-                viewModel.onEvent(CalculationEvent.InitializeErrorMessage)
-            }
-        }
 
-        Scaffold(modifier = Modifier.fillMaxSize(),
+
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
             topBar = {
                 CustomTopAppBar(
                     title = if (userType == "0") stringResource(R.string.calculationHistory) else stringResource(
@@ -82,10 +87,14 @@ class CalculationScreen : Screen {
                         navigator.replace(HomeScreen())
                     }
                 }
-            }) { innerPadding ->
-            if (userType == "1"){
-                if (!state.isLoading) {
-                    AnimatedVisibility(true) {
+            }
+        ) { innerPadding ->
+
+            Box(modifier = Modifier.fillMaxSize()) {
+
+                // Main content
+                if (userType == "1") {
+                    if (!state.isLoading)
                         MedicationCalculationScreen(
                             modifier = Modifier
                                 .padding(innerPadding)
@@ -95,24 +104,29 @@ class CalculationScreen : Screen {
                             inputEvent = viewModel::onInputEvent,
                             event = viewModel::onEvent
                         )
-                    }
-
-                } else {
-                    CustomCircularProgress(state.isLoading)
                 }
-            }else {
-                Text("History" ,modifier = Modifier.padding(innerPadding))
-            }
 
+                // Bottom sheet
+                if (state.showBottomSheet) {
+                    CalculationBottomSheet(
+                        modifier = Modifier.align(Alignment.BottomCenter),
+                        inputState = inputState,
+                        event = viewModel::onEvent,
+                        state = state
+                    ) {
+                        viewModel.onEvent(CalculationEvent.ToggleShowBottomSheet)
+                    }
+                }
 
-            if (state.showBottomSheet) {
-                CalculationBottomSheet(
-                    modifier = Modifier,
-                    inputState = inputState,
-                    event = viewModel::onEvent,
-                    state = state
-                ) {
-                    viewModel.onEvent(CalculationEvent.ToggleShowBottomSheet)
+                // Overlay loader (ALWAYS ON TOP)
+                if (state.isLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CustomCircularProgress(true)
+                    }
                 }
             }
         }
@@ -133,6 +147,7 @@ fun MedicationCalculationScreen(
     val showPatientData = remember { mutableStateOf(false) }
     val showLaboData = remember { mutableStateOf(false) }
     val showMedicalData = remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
 
     LazyColumn(
@@ -141,7 +156,7 @@ fun MedicationCalculationScreen(
 
         item {
             Text(
-                "Nom du Médicament Anticancéreux ",
+                "Name of the Anticancer Drug ",
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.SemiBold
                 ),
@@ -153,7 +168,7 @@ fun MedicationCalculationScreen(
         item {
             DropdownMenuLabel(
                 modifier = Modifier.padding(horizontal = SmallPadding),
-                name = inputState.nomDeMedicament.ifEmpty { "Sélectionnez un médicament" },
+                name = inputState.nomDeMedicament.ifEmpty { "Select a drug" },
                 menu = state.medicamentsList.map {
                     it.medicaments_nom
                 },
@@ -178,7 +193,7 @@ fun MedicationCalculationScreen(
                 .padding(horizontal = SmallPadding)
                 .offset(y = (-5).dp),
                 showItems = showPatientData.value,
-                sectionTitle = "Données du Patient",
+                sectionTitle = "Patient information",
                 onClick = {
                     showPatientData.value = !showPatientData.value
                 }) {
@@ -189,7 +204,7 @@ fun MedicationCalculationScreen(
                         onValueChange = {
                             inputEvent(CalculationInputEvent.OnAgeChanged(it))
                         },
-                        label = "Âge (années)",
+                        label = "Age (years)",
                         placeholder = "",
                         trailingIcon = {},
                         isError = !inputState.ageError.isNullOrEmpty(),
@@ -202,7 +217,7 @@ fun MedicationCalculationScreen(
                         onValueChange = {
                             inputEvent(CalculationInputEvent.OnPoidsChanged(it))
                         },
-                        label = "Poids (Kg)",
+                        label = "Weight (Kg)",
                         placeholder = "",
                         trailingIcon = {},
                         isError = !inputState.poidsError.isNullOrEmpty(),
@@ -215,7 +230,7 @@ fun MedicationCalculationScreen(
                         onValueChange = {
                             inputEvent(CalculationInputEvent.OnTailleChanged(it))
                         },
-                        label = "Taille (cm)",
+                        label = "Height (cm)",
                         placeholder = "",
                         trailingIcon = {},
                         isError = !inputState.tailleError.isNullOrEmpty(),
@@ -225,7 +240,7 @@ fun MedicationCalculationScreen(
 
 
                     Text(
-                        "Genre :",
+                        "Gender :",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
@@ -235,7 +250,7 @@ fun MedicationCalculationScreen(
                     )
 
                     DropdownMenuLabel(
-                        name = inputState.genre.name.ifEmpty { "Genre" },
+                        name = inputState.genre.name.ifEmpty { "Gender" },
                         menu = Genre.entries,
                         isError = false,
                         expanded = state.dropGenreMenu,
@@ -292,7 +307,7 @@ fun MedicationCalculationScreen(
                 .padding(horizontal = SmallPadding)
                 .offset(y = (-5).dp),
                 showItems = showLaboData.value,
-                sectionTitle = "Données de Laboratoire",
+                sectionTitle = "Lab data",
                 onClick = {
                     showLaboData.value = !showLaboData.value
                 }) {
@@ -304,7 +319,7 @@ fun MedicationCalculationScreen(
                         onValueChange = {
                             inputEvent(CalculationInputEvent.OnCreatinineChanged(it))
                         },
-                        label = "Créatinine [mg/dL]",
+                        label = "Creatinine [mg/dL]",
                         placeholder = "",
                         trailingIcon = {},
                         isError = !inputState.creatinineError.isNullOrEmpty(),
@@ -312,7 +327,7 @@ fun MedicationCalculationScreen(
                     )
 
                     Text(
-                        "Type De Dfg :",
+                        "Dfg Type :",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
@@ -346,7 +361,7 @@ fun MedicationCalculationScreen(
                         onValueChange = {
                             inputEvent(CalculationInputEvent.OnDfgChanged(it))
                         },
-                        label = "DFG [mL/min] (si disponible)",
+                        label = "DFG [mL/min] (id available)",
                         placeholder = "",
                         trailingIcon = {},
                         isError = !inputState.dfgError.isNullOrEmpty(),
@@ -414,7 +429,7 @@ fun MedicationCalculationScreen(
                 .padding(horizontal = SmallPadding)
                 .offset(y = -(5.dp)),
                 showItems = showMedicalData.value,
-                sectionTitle = "Données du Médicament",
+                sectionTitle = "Drug Data",
                 onClick = {
                     showMedicalData.value = !showMedicalData.value
                 }) {
@@ -440,7 +455,7 @@ fun MedicationCalculationScreen(
                         onValueChange = {
                             inputEvent(CalculationInputEvent.OnAucCibleChanged(it))
                         },
-                        label = "AUC cible [mg-min/L]",
+                        label = "AUC target [mg-min/L]",
                         placeholder = "",
                         trailingIcon = {},
                         isError = !inputState.aucCibleError.isNullOrEmpty(),
@@ -448,7 +463,7 @@ fun MedicationCalculationScreen(
                     )
 
                     Text(
-                        "Toxicité rénale :",
+                        "Kidney toxicity :",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
@@ -458,13 +473,13 @@ fun MedicationCalculationScreen(
                     )
 
                     DropdownMenuLabel(
-                        name = if (inputState.toxiciteRenale) "Oui" else "Non",
-                        menu = listOf("Oui", "Non"),
+                        name = if (inputState.toxiciteRenale) "Yes" else "No",
+                        menu = listOf("Yes", "No"),
                         isError = false,
                         expanded = state.dropToxiciteRenaleMenu,
-                        selectedItem = if (inputState.toxiciteRenale) "Oui" else "Non",
+                        selectedItem = if (inputState.toxiciteRenale) "Yes" else "No",
                         onSelectItemClick = {
-                            inputEvent(CalculationInputEvent.OnToxiciteRenaleChanged(it == "Oui"))
+                            inputEvent(CalculationInputEvent.OnToxiciteRenaleChanged(it == "Yes"))
                         },
                         onDismissRequest = {
                             event(CalculationEvent.ToggleToxiciteRenaleDropMenu)
@@ -476,7 +491,7 @@ fun MedicationCalculationScreen(
                     )
 
                     Text(
-                        "Toxicité hépatique :",
+                        "Hepatic toxicity :",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
@@ -486,13 +501,13 @@ fun MedicationCalculationScreen(
                     )
                     DropdownMenuLabel(
                         modifier = Modifier.offset(y = -(5.dp)),
-                        name = if (inputState.toxiciteHepatique) "Oui" else "Non",
-                        menu = listOf("Oui", "Non"),
+                        name = if (inputState.toxiciteHepatique) "Yes" else "No",
+                        menu = listOf("Yes", "No"),
                         isError = false,
                         expanded = state.dropToxiciteHepatiqueMenu,
-                        selectedItem = if (inputState.toxiciteHepatique) "Oui" else "Non",
+                        selectedItem = if (inputState.toxiciteHepatique) "Yes" else "No",
                         onSelectItemClick = {
-                            inputEvent(CalculationInputEvent.OnToxiciteHepatiqueChanged(it == "Oui"))
+                            inputEvent(CalculationInputEvent.OnToxiciteHepatiqueChanged(it == "Yes"))
                         },
                         onDismissRequest = {
                             event(CalculationEvent.ToggleToxiciteHepatiqueDropMenu)
@@ -504,7 +519,7 @@ fun MedicationCalculationScreen(
                     )
 
                     Text(
-                        "Nécessité de dialyse :",
+                        "Need for dialysis :",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
@@ -514,13 +529,13 @@ fun MedicationCalculationScreen(
                     )
                     DropdownMenuLabel(
                         modifier = Modifier.offset(y = -(SmallPadding)),
-                        name = if (inputState.necessiteDialyse) "Oui" else "Non",
-                        menu = listOf("Oui", "Non"),
+                        name = if (inputState.necessiteDialyse) "Yes" else "No",
+                        menu = listOf("Yes", "No"),
                         isError = false,
                         expanded = state.dropDialyseMenu,
-                        selectedItem = if (inputState.necessiteDialyse) "Oui" else "Non",
+                        selectedItem = if (inputState.necessiteDialyse) "Yes" else "No",
                         onSelectItemClick = {
-                            inputEvent(CalculationInputEvent.OnNecessiteDialyseChanged(it == "Oui"))
+                            inputEvent(CalculationInputEvent.OnNecessiteDialyseChanged(it == "Yes"))
                         },
                         onDismissRequest = {
                             event(CalculationEvent.ToggleDialyseDropMenu)
@@ -545,13 +560,10 @@ fun MedicationCalculationScreen(
             ) {
                 Button(modifier = Modifier.align(Alignment.CenterHorizontally), onClick = {
 
-                    event(CalculationEvent.OnCalculate)
-
-//                    if (state.error == null)
-//                        event(CalculationEvent.ToggleShowBottomSheet)
+                    event(CalculationEvent.OnCalculate(context))
 
                 }) {
-                    Text("Calculer", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.calculate), fontWeight = FontWeight.Bold)
                 }
             }
         }

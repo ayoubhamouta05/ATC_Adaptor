@@ -36,66 +36,66 @@ class ContactezScreen : Screen {
         val navigator = LocalNavigator.currentOrThrow
         val context = LocalContext.current
 
-            Scaffold(
-                topBar = {
-                    CustomTopAppBar(title = "Contactez-nous" , isArabic = false) {
-                        if (navigator.canPop) {
-                            navigator.pop()
-                        } else {
-                            navigator.replace(HomeScreen())
-                        }
-                    }
-                }
-            ) { padding ->
-                Column(
-                    modifier = Modifier
-                        .padding(padding)
-                        .padding(16.dp)
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "Besoin d’aide ou de plus d'informations ?",
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(bottom = 24.dp)
-                    )
-
-                    Button(
-                        onClick =  {
-                            val intent = Intent(Intent.ACTION_DIAL).apply {
-                                data = Uri.parse("tel:+213660879814") // Ton numéro ici
-                            }
-                            context.startActivity(intent)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                    ) {
-                        Icon(Icons.Default.Call, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
-                        Text("Appeler")
-                    }
-
-                    Button(
-                        onClick = {
-                            val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                data = Uri.parse("mailto:ayoubbhamouta@gmail.com") // Ton adresse ici
-                                putExtra(Intent.EXTRA_SUBJECT, "Demande d’information")
-                            }
-                            context.startActivity(intent)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                    ) {
-                        Icon(Icons.Default.Email, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
-                        Text("Envoyer un e-mail")
+        Scaffold(
+            topBar = {
+                CustomTopAppBar(title = "Contactez-nous", isArabic = false) {
+                    if (navigator.canPop) {
+                        navigator.pop()
+                    } else {
+                        navigator.replace(HomeScreen())
                     }
                 }
             }
+        ) { padding ->
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .padding(16.dp)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Besoin d’aide ou de plus d'informations ?",
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(bottom = 24.dp)
+                )
+
+                Button(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_DIAL).apply {
+                            data = Uri.parse("tel:+213660879814") // Ton numéro ici
+                        }
+                        context.startActivity(intent)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                ) {
+                    Icon(Icons.Default.Call, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text("Appeler")
+                }
+
+                Button(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_SENDTO).apply {
+                            data = Uri.parse("mailto:ayoubbhamouta@gmail.com") // Ton adresse ici
+                            putExtra(Intent.EXTRA_SUBJECT, "Demande d’information")
+                        }
+                        context.startActivity(intent)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                ) {
+                    Icon(Icons.Default.Email, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text("Envoyer un e-mail")
+                }
+            }
+        }
 
     }
 }

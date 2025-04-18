@@ -106,6 +106,7 @@
     <string name="orderStatus">Order status</string>
     <string name="withoutAnAccount" translatable="false">without account</string>
     <string name="or">Or</string>
+    <string name="historic" translatable="false">Historic</string>
 
     <string name="error">An error occurred</string>
     <string name="ifYouChangeEmailYouMustVerifyIt">If you change your email, you must verify it.</string>
@@ -113,5 +114,11 @@
     <string name="calculationHistory" translatable="false">Historic of calculations</string>
     <string name="calculate" translatable="false">Calculate</string>
     <string name="close" translatable="false">Close</string>
+    <string name="result" translatable="false">Result</string>
     <string name="calculationSaved" translatable="false">Calculation Saved Successfully</string>
+    <string name="review" translatable="false">Review</string>
+    <string name="leaveReview" translatable="false">leave a review</string>
+    <string name="selectPatient" translatable="false">Select Patient</string>
+    <string name="pleaseSelectPatientErrorMsg" translatable="false">Please select a patient</string>
+    <string name="pleaseFeelAllFeildsBeforeCalculating" translatable="false">Please fill out all fields correctly before calculating.</string>
 </resources>

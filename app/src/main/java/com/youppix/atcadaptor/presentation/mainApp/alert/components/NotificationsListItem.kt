@@ -1,6 +1,7 @@
 package com.youppix.atcadaptor.presentation.mainApp.alert.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,7 +25,7 @@ import com.youppix.atcadaptor.common.Dimens.SmallPadding
 import com.youppix.atcadaptor.domain.model.notification.Notification
 
 @Composable
-fun NotificationsListItem(modifier: Modifier = Modifier, notification: Notification) {
+fun NotificationsListItem(modifier: Modifier = Modifier, notification: Notification , onClick : (Notification) -> Unit) {
 
     Row(
         modifier = modifier
@@ -35,6 +36,9 @@ fun NotificationsListItem(modifier: Modifier = Modifier, notification: Notificat
                 shape = RoundedCornerShape(SmallPadding)
             )
             .clip(RoundedCornerShape(SmallPadding))
+            .clickable {
+                onClick(notification)
+            }
             .padding(horizontal = SmallPadding, vertical = ExtraSmallPadding2),
         verticalAlignment = Alignment.Top
     ) {

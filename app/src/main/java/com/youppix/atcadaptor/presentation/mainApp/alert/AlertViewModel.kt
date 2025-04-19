@@ -37,7 +37,7 @@ class AlertViewModel @Inject constructor(
                     _state.value = state.value.copy(
                         isLoading = false ,
                         error = null,
-                        notifications =  result.data?.notificationsData?.toNotifications() ?: emptyList()
+                        notifications =  result.data?.data?.toNotifications() ?: emptyList()
                     )
                 }
             }

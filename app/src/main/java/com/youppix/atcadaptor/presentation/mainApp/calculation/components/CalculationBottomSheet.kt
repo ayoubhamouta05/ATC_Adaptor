@@ -109,38 +109,40 @@ fun CalculationBottomSheet(
                         Button(
                             onClick = {
                                 inputState.apply {
-                                    event(
-                                        CalculationEvent.SaveCalculation(
-                                            context, CalculationData(
-                                                user_id = 1,
-                                                calculated_by = if (userId.isNullOrEmpty()) 0 else userId.toInt(),
-                                                nom_de_medicament = nomDeMedicament,
-                                                age = age.toInt(),
-                                                poids = poids,
-                                                taille = taille,
-                                                genre = genre.name,
-                                                race = race.name,
-                                                creatinine = creatinine,
-                                                alat = alat,
-                                                asat = asat,
-                                                pal = pal,
-                                                tbil = tbil,
-                                                dfg_type = dfgType.name,
-                                                dfg = dfg,
-                                                dfg_calcule = dfgCalcule,
-                                                auc_cible = aucCible,
-                                                dose_carboplatine = doseCarboplatine,
-                                                dose_par_m2 = doseParM2,
-                                                toxicite_renale = if (toxiciteRenale) 1 else 0,
-                                                toxicite_hepatique = if (toxiciteHepatique) 1 else 0,
-                                                necessite_dialyse = if (necessiteDialyse) 1 else 0,
-                                                sc = sc,
-                                                recommandation = state.recommendationAndDose.first,
-                                                dose_recommandee = state.recommendationAndDose.second.toString(),
-                                                comment = state.comment
+                                    state.selectedUser?.let { selectedUser ->
+                                        event(
+                                            CalculationEvent.SaveCalculation(
+                                                context, CalculationData(
+                                                    user_id = selectedUser.userId,
+                                                    calculated_by = if (userId.isNullOrEmpty()) 0 else userId.toInt(),
+                                                    nom_de_medicament = nomDeMedicament,
+                                                    age = age.toInt(),
+                                                    poids = poids,
+                                                    taille = taille,
+                                                    genre = genre.name,
+                                                    race = race.name,
+                                                    creatinine = creatinine,
+                                                    alat = alat,
+                                                    asat = asat,
+                                                    pal = pal,
+                                                    tbil = tbil,
+                                                    dfg_type = dfgType.name,
+                                                    dfg = dfg,
+                                                    dfg_calcule = dfgCalcule,
+                                                    auc_cible = aucCible,
+                                                    dose_carboplatine = doseCarboplatine,
+                                                    dose_par_m2 = doseParM2,
+                                                    toxicite_renale = if (toxiciteRenale) 1 else 0,
+                                                    toxicite_hepatique = if (toxiciteHepatique) 1 else 0,
+                                                    necessite_dialyse = if (necessiteDialyse) 1 else 0,
+                                                    sc = sc,
+                                                    recommandation = state.recommendationAndDose.first,
+                                                    dose_recommandee = state.recommendationAndDose.second.toString(),
+                                                    comment = state.comment
+                                                )
                                             )
                                         )
-                                    )
+                                    }
                                 }
 
                             },
@@ -280,93 +282,108 @@ fun CalculationBottomSheet(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    AnimatedVisibility(!imeVisible) {
-                        Card(
-                            modifier = modifier
-                                .fillMaxWidth()
-                                .padding(ExtraSmallPadding),
-                            shape = RoundedCornerShape(SmallPadding),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.White)
-                        ) {
-                            val (recommendation, recommendedDose) = state.recommendationAndDose
-                            Log.d("CalcultaionBottomSheet", "recommendation :" + recommendation)
-                            Column(
-                                modifier = Modifier.padding(MediumPadding)
+                    if(state.isLoading){
+
+                    }else {
+                        AnimatedVisibility(!imeVisible) {
+                            Card(
+                                modifier = modifier
+                                    .fillMaxWidth()
+                                    .padding(ExtraSmallPadding),
+                                shape = RoundedCornerShape(SmallPadding),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                                colors = CardDefaults.cardColors(containerColor = Color.White)
                             ) {
-                                ResultRow(
-                                    label = "Surface corporelle (SC)",
-                                    value = "${inputState.sc.format(2)} m²"
-                                )
-                                ResultRow(
-                                    label = "DFG calculé",
-                                    value = "${inputState.dfgCalcule.format(2)} mL/min"
-                                )
-                                ResultRow(
-                                    label = "Dose de carboplatine",
-                                    value = "${inputState.doseCarboplatine.format(2)} mg"
-                                )
-                                ResultRow(
-                                    label = "Recommandation selon la ligne directrice (RCP) :",
-                                    value = recommendation
-                                )
-                                ResultRow(
-                                    label = "Dose individuelle recommandée: ",
-                                    value = "${recommendedDose.format(2)} mg"
-                                )
+                                val (recommendation, recommendedDose) = state.recommendationAndDose
+                                Log.d("CalcultaionBottomSheet", "recommendation :" + recommendation)
+                                Column(
+                                    modifier = Modifier.padding(MediumPadding)
+                                ) {
+                                    ResultRow(
+                                        label = "Surface corporelle (SC)",
+                                        value = "${inputState.sc.format(2)} m²"
+                                    )
+                                    ResultRow(
+                                        label = "DFG calculé",
+                                        value = "${inputState.dfgCalcule.format(2)} mL/min"
+                                    )
+                                    ResultRow(
+                                        label = "Dose de carboplatine",
+                                        value = "${inputState.doseCarboplatine.format(2)} mg"
+                                    )
+                                    ResultRow(
+                                        label = "Recommandation selon la ligne directrice (RCP) :",
+                                        value = recommendation
+                                    )
+                                    ResultRow(
+                                        label = "Dose individuelle recommandée: ",
+                                        value = "${recommendedDose.format(2)} mg"
+                                    )
+                                }
                             }
                         }
-                    }
 
-                    CustomTextField(
-                        modifier = Modifier.padding(top = SmallPadding,end =SmallPadding , start = SmallPadding),
-                        value = state.comment,
-                        onValueChange = {
-                            event(CalculationEvent.OnCommentValueChange(it))
-                        },
-                        label = stringResource(R.string.review),
-                        trailingIcon = {},
-                        placeholder = stringResource(R.string.leaveReview),
-                        isError = false,
-                        errorMessage = "",
-                        maxLines = Int.MAX_VALUE
-                    )
-                    TextButton(modifier = Modifier.padding(horizontal = SmallPadding), onClick = {
-                        event(CalculationEvent.ToggleShowUserSelection)
-                    }) {
-                        Text(
-                            stringResource(R.string.selectPatient),
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                textDecoration = TextDecoration.Underline,
-                                fontWeight = FontWeight.Bold
-                            )
+
+                        CustomTextField(
+                            modifier = Modifier.padding(
+                                top = SmallPadding,
+                                end = SmallPadding,
+                                start = SmallPadding
+                            ),
+                            value = state.comment,
+                            onValueChange = {
+                                event(CalculationEvent.OnCommentValueChange(it))
+                            },
+                            label = stringResource(R.string.review),
+                            trailingIcon = {},
+                            placeholder = stringResource(R.string.leaveReview),
+                            isError = false,
+                            errorMessage = "",
+                            maxLines = Int.MAX_VALUE
                         )
-                    }
-
-                    if(state.selectedUser!=null) {
-                        Card(
-                            modifier = modifier
-                                .fillMaxWidth()
-                                .padding(start = SmallPadding, end = SmallPadding, bottom = SmallPadding,),
-                            shape = RoundedCornerShape(SmallPadding),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.White)
-                        ) {
-
-                            ListItem(headlineContent = {
-                                Text(
-                                    state.selectedUser.userName,
-                                    style = MaterialTheme.typography.titleSmall
+                        TextButton(
+                            modifier = Modifier.padding(horizontal = SmallPadding),
+                            onClick = {
+                                event(CalculationEvent.ToggleShowUserSelection)
+                            }) {
+                            Text(
+                                stringResource(R.string.selectPatient),
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    textDecoration = TextDecoration.Underline,
+                                    fontWeight = FontWeight.Bold
                                 )
-                            }, supportingContent = {
-                                Text(
-                                    "ID: ${state.selectedUser.userId} | ${state.selectedUser.userEmail}",
-                                    style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+
+                        if (state.selectedUser != null) {
+                            Card(
+                                modifier = modifier
+                                    .fillMaxWidth()
+                                    .padding(
+                                        start = SmallPadding,
+                                        end = SmallPadding,
+                                        bottom = SmallPadding,
+                                    ),
+                                shape = RoundedCornerShape(SmallPadding),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                                colors = CardDefaults.cardColors(containerColor = Color.White)
+                            ) {
+
+                                ListItem(headlineContent = {
+                                    Text(
+                                        state.selectedUser.userName,
+                                        style = MaterialTheme.typography.titleSmall
+                                    )
+                                }, supportingContent = {
+                                    Text(
+                                        "ID: ${state.selectedUser.userId} | ${state.selectedUser.userEmail}",
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                }, colors = ListItemDefaults.colors(
+                                    containerColor = Color.Transparent
                                 )
-                            }, colors = ListItemDefaults.colors(
-                                containerColor = Color.Transparent
-                            )
-                            )
+                                )
+                            }
                         }
                     }
                 }

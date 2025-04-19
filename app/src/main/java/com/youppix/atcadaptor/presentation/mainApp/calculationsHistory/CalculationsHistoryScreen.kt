@@ -4,10 +4,16 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddAlert
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -32,14 +38,16 @@ import com.youppix.atcadaptor.common.Dimens.BottomBarHeight
 import com.youppix.atcadaptor.common.Dimens.MediumPadding
 import com.youppix.atcadaptor.common.Dimens.SmallPadding
 import com.youppix.atcadaptor.presentation.components.CustomCircularProgress
+import com.youppix.atcadaptor.presentation.components.CustomIcon
 import com.youppix.atcadaptor.presentation.components.CustomTopAppBar
+import com.youppix.atcadaptor.presentation.mainApp.asking.AskingScreen
 import com.youppix.atcadaptor.presentation.mainApp.calculationDetails.CalculationDetailsScreen
 import com.youppix.atcadaptor.presentation.mainApp.components.EmptyContent
 import com.youppix.atcadaptor.presentation.mainApp.components.EmptyScreen
 import com.youppix.atcadaptor.presentation.mainApp.home.HomeScreen
 
 
-class CalculationsHistoryScreen : Screen {
+class CalculationsHistoryScreen(private val patientUserId : String?=null) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
@@ -47,15 +55,40 @@ class CalculationsHistoryScreen : Screen {
         val state by viewModel.state
         val context = LocalContext.current
         val userId = context.getSharedPreferences(APP_ENTRY, 0).getString("userId", "0")
+        val userType = context.getSharedPreferences(APP_ENTRY, 0).getString("userType", "0")
 
 
         LaunchedEffect(Unit) {
-            userId?.let { viewModel.getHistory(it) }
+            if(patientUserId == null) {
+                userId?.let { viewModel.getHistory(it) }
+            }else{
+                viewModel.getHistory(patientUserId)
+            }
         }
 
         Scaffold(
             topBar = {
-                CustomTopAppBar(title = stringResource(R.string.calculationHistory), isArabic = false) {
+//                CustomTopAppBar(title = stringResource(R.string.calculationHistory), isArabic = false) {
+//                    if (navigator.canPop) {
+//                        navigator.pop()
+//                    } else {
+//                        navigator.replaceAll(HomeScreen())
+//                    }
+//                }
+
+                CustomTopAppBar(
+                    title = stringResource(R.string.calculationHistory),
+                    isArabic = false,
+                    actions = {
+                        if(userType == "1") {
+                            patientUserId?.let {
+                                CustomIcon(imageVector = Icons.Default.Quiz) {
+                                    navigator.push(AskingScreen(it))
+                                }
+                            }
+
+                        }
+                    }) {
                     if (navigator.canPop) {
                         navigator.pop()
                     } else {
@@ -68,9 +101,13 @@ class CalculationsHistoryScreen : Screen {
 
             if (state.isLoading) {
                 CustomCircularProgress(state.isLoading)
-            }else if (state.historyList.isEmpty()){
-                EmptyContent(alphaAnim = 4f, iconId =  R.drawable.ic_search_document, message = "No Calculation Made Yet."){}
-        }else {
+            } else if (state.historyList.isEmpty()) {
+                EmptyContent(
+                    alphaAnim = 4f,
+                    iconId = R.drawable.ic_search_document,
+                    message = "No Calculation Made Yet."
+                ) {}
+            } else {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()

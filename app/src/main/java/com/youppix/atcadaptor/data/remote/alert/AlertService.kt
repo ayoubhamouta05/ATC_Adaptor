@@ -3,6 +3,7 @@ package com.youppix.atcadaptor.data.remote.alert
 import android.util.Log
 import com.youppix.atcadaptor.common.Resource
 import com.youppix.atcadaptor.common.Urls.GET_NOTIFICATIONS_URL
+import com.youppix.atcadaptor.common.Urls.SEND_NOTIFICATION_URL
 import com.youppix.atcadaptor.common.Urls.UPDATE_NOTIFICATION_URL
 import com.youppix.atcadaptor.data.remote.alert.dto.NotificationsResponse
 import com.youppix.atcadaptor.data.remote.dto.StandardResponse
@@ -39,7 +40,12 @@ class AlertService (private val client : HttpClient){
                 }
                 val responseBody = response.body<NotificationsResponse>()
 
-                emit(Resource.Successful(responseBody))
+                if (responseBody.status == "success"){
+                    emit(Resource.Successful(responseBody))
+                }else{
+                    emit(Resource.Error(responseBody.message))
+                }
+
                 Log.d("SearchService", response.body())
             } catch (e: ClientRequestException) {
                 emit(Resource.Error("Client request error"))
@@ -70,6 +76,49 @@ class AlertService (private val client : HttpClient){
 
             val response = client.post(UPDATE_NOTIFICATION_URL) {
                 setBody(body)
+            }
+            Log.d("SearchService", response.body())
+        } catch (e: ClientRequestException) {
+            Log.d("SignUpService", "Client request error: ${e.localizedMessage}")
+        } catch (e: ServerResponseException) {
+            Log.d("SignUpService", "Server response error: ${e.localizedMessage}")
+        } catch (e: IOException) {
+            Log.d("SignUpService", "Couldn't reach server: ${e.message}")
+        } catch (e: SerializationException) {
+            Log.d("SignUpService", "Serialization error: ${e.localizedMessage}")
+        }
+
+    }
+
+    fun sendNotification(topic : String ,title : String , body : String , sender: String) : Flow<Resource<StandardResponse>> = flow {
+
+        try {
+
+            emit(Resource.Loading())
+            @Serializable
+            data class Body(
+                val topic : String ,
+                val title : String ,
+                val body : String ,
+                val sender: String
+            )
+
+            val body = Body(
+                topic = topic,
+                title = title,
+                body = body,
+                sender = sender
+            )
+
+            val response = client.post(SEND_NOTIFICATION_URL) {
+                setBody(body)
+            }
+            val responseBody = response.body<StandardResponse>()
+
+            if (responseBody.status == "success"){
+                emit(Resource.Successful(responseBody))
+            }else{
+                emit(Resource.Error(responseBody.message))
             }
             Log.d("SearchService", response.body())
         } catch (e: ClientRequestException) {

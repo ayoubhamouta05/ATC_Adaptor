@@ -47,6 +47,7 @@ import com.youppix.atcadaptor.domain.useCases.home.HomeSearchUseCase
 import com.youppix.atcadaptor.domain.useCases.home.HomeUseCases
 import com.youppix.atcadaptor.domain.useCases.notifications.GetNotificationsUseCase
 import com.youppix.atcadaptor.domain.useCases.notifications.NotificationsUseCases
+import com.youppix.atcadaptor.domain.useCases.notifications.SendNotificationUseCase
 import com.youppix.atcadaptor.domain.useCases.notifications.UpdateNotificationUseCase
 import com.youppix.atcadaptor.domain.useCases.profile.CheckEmailAvailabilityUseCase
 import com.youppix.atcadaptor.domain.useCases.profile.GetUserDataUseCase
@@ -303,6 +304,7 @@ object AppModule {
     fun provideNotificationsUseCases(notificationsRepository: NotificationsRepository): NotificationsUseCases =
         NotificationsUseCases(
             getNotifications = GetNotificationsUseCase(notificationsRepository) ,
-            updateNotification = UpdateNotificationUseCase(notificationsRepository)
+            updateNotification = UpdateNotificationUseCase(notificationsRepository) ,
+            sendNotification = SendNotificationUseCase(notificationsRepository)
         )
 }

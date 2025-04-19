@@ -28,7 +28,27 @@ class CalculationViewModel @Inject constructor(
 
     private val _inputState = mutableStateOf(
         CalculationInputState(
-//            nomDeMedicament = "CARBOPLATINE",
+            nomDeMedicament = "Carboplatine",
+            age = "65",
+            poids = "78",
+            taille = "170",
+            genre = Genre.Homme,
+            race = Race.Non_Afro_Americain,
+            creatinine = "1.1",
+            dfg = "75",
+            dfgType = DFGType.MDRD,
+            alat = "32",
+            asat = "28",
+            pal = "120",
+            tbil = "1.0",
+            doseParM2 = "250",
+            aucCible = "6",
+            toxiciteRenale = false,
+            toxiciteHepatique = false,
+            necessiteDialyse = false,
+            sc = "1.95",
+            dfgCalcule = "74.3",
+            doseCarboplatine = "500"
         )
     )
     val inputState: State<CalculationInputState> = _inputState

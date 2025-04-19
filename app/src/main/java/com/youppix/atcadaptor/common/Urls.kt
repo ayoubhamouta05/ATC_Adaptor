@@ -2,7 +2,7 @@ package com.youppix.atcadaptor.common
 
 object Urls {
 
-    private const val BASE_URL = "http://192.168.0.25:8080/atc_adaptor/"
+    private const val BASE_URL = "http://192.168.230.51:8080/atc_adaptor/"
 
     /** auth urls */
     const val SIGNUP_URL = "$BASE_URL/auth/signup.php"
@@ -34,4 +34,5 @@ object Urls {
     /** alert urls*/
     const val GET_NOTIFICATIONS_URL = "$BASE_URL/notifications/getNotifications.php"
     const val UPDATE_NOTIFICATION_URL = "$BASE_URL/notifications/updateNotification.php"
+    const val SEND_NOTIFICATION_URL = "$BASE_URL/notifications/sendNotification.php"
 }

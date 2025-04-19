@@ -6,6 +6,7 @@ import com.youppix.atcadaptor.presentation.authentication.forgotPassword.ForgotP
 import com.youppix.atcadaptor.presentation.authentication.login.LoginViewModel
 import com.youppix.atcadaptor.presentation.authentication.signup.SignUpViewModel
 import com.youppix.atcadaptor.presentation.mainApp.alert.AlertViewModel
+import com.youppix.atcadaptor.presentation.mainApp.asking.AskingViewModel
 import com.youppix.atcadaptor.presentation.mainApp.calculation.CalculationViewModel
 import com.youppix.atcadaptor.presentation.mainApp.calculationDetails.CalculationDetailsViewModel
 import com.youppix.atcadaptor.presentation.mainApp.calculationsHistory.CalculationsHistoryViewModel
@@ -90,5 +91,10 @@ abstract class HiltScreenModels {
     @IntoMap
     @ScreenModelKey(AlertViewModel::class)
     abstract fun bindHiltAlertViewModel(alertViewModel: AlertViewModel): ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(AskingViewModel::class)
+    abstract fun bindHiltAskingViewModel(askingViewModel: AskingViewModel): ScreenModel
 
 }

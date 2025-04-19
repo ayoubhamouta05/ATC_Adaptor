@@ -43,12 +43,16 @@ import com.youppix.atcadaptor.common.Dimens.LargePadding
 import com.youppix.atcadaptor.common.Dimens.MediumPadding
 import com.youppix.atcadaptor.common.Dimens.SmallPadding
 import com.youppix.atcadaptor.presentation.components.LeavingAppDialog
+import com.youppix.atcadaptor.presentation.components.NotificationPermissionHandler
 import com.youppix.atcadaptor.presentation.components.StatusBarColor
+import com.youppix.atcadaptor.presentation.components.isNotificationPermissionGranted
 import com.youppix.atcadaptor.presentation.mainApp.alert.AlertScreen
+import com.youppix.atcadaptor.presentation.mainApp.asking.AskingScreen
 import com.youppix.atcadaptor.presentation.mainApp.calculation.CalculationScreen
 import com.youppix.atcadaptor.presentation.mainApp.components.CustomBottomBar
 import com.youppix.atcadaptor.presentation.mainApp.components.shadow
 import com.youppix.atcadaptor.presentation.mainApp.home.HomeScreen
+import com.youppix.atcadaptor.presentation.mainApp.profile.ProfileEvent
 import com.youppix.atcadaptor.presentation.mainApp.profile.ProfileScreen
 import com.youppix.atcadaptor.presentation.mainApp.scanner.ScannerScreen
 import com.youppix.atcadaptor.presentation.mainApp.support.SupportScreen
@@ -173,8 +177,8 @@ class MainActivity : ComponentActivity() {
                         Navigator(screen = HomeScreen()) { navigator ->
                             this@MainActivity.navigator = navigator
                             FadeTransition(navigator = navigator)
-//                            showBottomBar =
-//                                navigator.lastItem.javaClass.name != DetailsScreen::class.java.name &&
+                            showBottomBar =
+                                navigator.lastItem.javaClass.name != AskingScreen::class.java.name
 //                                        navigator.lastItem.javaClass.name != CustomSizeScreen::class.java.name &&
 //                                        navigator.lastItem.javaClass.name != CartScreen::class.java.name &&
 //                                        navigator.lastItem.javaClass.name != CheckoutScreen::class.java.name &&

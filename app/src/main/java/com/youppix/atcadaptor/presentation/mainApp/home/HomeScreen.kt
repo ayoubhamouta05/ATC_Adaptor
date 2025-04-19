@@ -31,6 +31,7 @@ import com.youppix.atcadaptor.common.UserRole
 import com.youppix.atcadaptor.presentation.authentication.AuthActivity
 import com.youppix.atcadaptor.presentation.components.CustomCircularProgress
 import com.youppix.atcadaptor.presentation.components.NeedToBeLogged
+import com.youppix.atcadaptor.presentation.components.NotificationPermissionHandler
 import com.youppix.atcadaptor.presentation.mainApp.components.CustomSearchBar
 import com.youppix.atcadaptor.presentation.mainApp.components.EmptyScreen
 import com.youppix.atcadaptor.presentation.mainApp.details.DetailsScreen
@@ -59,6 +60,8 @@ class HomeScreen : Screen {
         LaunchedEffect(Unit) {
             viewModel.onEvent(HomeEvent.UpdateUserType(userType!!.toInt()))
         }
+
+        NotificationPermissionHandler()
 
         ATCAdaptorTheme {
             Scaffold(modifier = Modifier.fillMaxSize(), topBar = {

@@ -1,36 +1,35 @@
 package com.youppix.atcadaptor.presentation.mainApp.calculationDetails
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.youppix.atcadaptor.common.Constant.APP_ENTRY
 import com.youppix.atcadaptor.common.Dimens.BottomBarHeight
 import com.youppix.atcadaptor.common.Dimens.MediumPadding
 import com.youppix.atcadaptor.common.Dimens.SmallPadding
 import com.youppix.atcadaptor.presentation.components.CustomCircularProgress
+import com.youppix.atcadaptor.presentation.components.CustomIcon
 import com.youppix.atcadaptor.presentation.components.CustomTopAppBar
+import com.youppix.atcadaptor.presentation.mainApp.asking.AskingScreen
 import com.youppix.atcadaptor.presentation.mainApp.home.HomeScreen
 import com.youppix.atcadaptor.presentation.mainApp.patientDetails.InfoCard
 
 class CalculationDetailsScreen(
-    private val userId: String,
+    private val patientUserId: String,
     private val calculationId: String
 ) : Screen {
     @Composable
@@ -39,12 +38,30 @@ class CalculationDetailsScreen(
         val viewModel = navigator.getNavigatorScreenModel<CalculationDetailsViewModel>()
         val state by viewModel.state
         LaunchedEffect(Unit) {
-            viewModel.getCalculationDetails(userId = userId, calculationId = calculationId)
+            viewModel.getCalculationDetails(userId = patientUserId, calculationId = calculationId)
         }
+
+        val context = LocalContext.current
+        val userType = context.getSharedPreferences(APP_ENTRY ,  0).getString("userType" , "0")
 
         Scaffold(
             topBar = {
-                CustomTopAppBar(title = "Calculation Details", isArabic = false) {
+                CustomTopAppBar(title = "Calculation Details", isArabic = false,
+                    actions = {
+                        state.calculationData?.let {calculationData ->
+                            CustomIcon(imageVector = Icons.Default.Quiz) {
+                                navigator.push(
+                                    AskingScreen(
+                                        to = if (userType == "0")
+                                            calculationData.calculated_by.toString()
+                                        else
+                                            patientUserId
+                                    )
+                                )
+                            }
+                        }
+
+                    }) {
                     if (navigator.canPop) {
                         navigator.pop()
                     } else {
@@ -63,9 +80,7 @@ class CalculationDetailsScreen(
                         modifier = Modifier
                             .padding(innerPadding)
                             .fillMaxSize()
-                            .padding(MediumPadding)
-
-                            ,
+                            .padding(MediumPadding),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         item {

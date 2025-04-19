@@ -24,19 +24,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.youppix.atcadaptor.R
 import com.youppix.atcadaptor.common.Dimens.BottomBarHeight
 import com.youppix.atcadaptor.common.Dimens.MediumPadding
 import com.youppix.atcadaptor.common.Dimens.SmallPadding
 import com.youppix.atcadaptor.presentation.components.CustomCircularProgress
 import com.youppix.atcadaptor.presentation.components.CustomTopAppBar
 import com.youppix.atcadaptor.presentation.mainApp.calculationDetails.CalculationDetailsScreen
+import com.youppix.atcadaptor.presentation.mainApp.calculationsHistory.CalculationsHistoryScreen
 import com.youppix.atcadaptor.presentation.mainApp.home.HomeScreen
 
 
@@ -107,7 +111,26 @@ class PatientDetailsScreen(
                     }
 
                     item {
-                        PatientSectionTitle("Calculations Historic")
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            PatientSectionTitle("Calculations Historic")
+                            state.patientData?.let {patient->
+                                if (patient.calculations.size > 3) {
+                                    Text(
+                                        "See All", style = MaterialTheme.typography.bodyMedium.copy(
+                                            fontWeight = FontWeight.Bold,
+                                            textDecoration = TextDecoration.Underline,
+                                            color = colorResource(R.color.text_medium)
+                                        ),
+                                        modifier = Modifier.clickable {
+                                            navigator.push(CalculationsHistoryScreen(patient.userId.toString()))
+                                        }
+                                    )
+                                }
+                            }
+                        }
 
                     }
                     state.patientData?.let { patient ->
@@ -120,7 +143,7 @@ class PatientDetailsScreen(
                                     .clickable {
                                         navigator.push(
                                             CalculationDetailsScreen(
-                                                patient.patientId.toString(),
+                                                patient.userId.toString(),
                                                 patient.calculations[index].calculation_id.toString()
                                             )
                                         )
@@ -199,7 +222,7 @@ fun InfoCard(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(text = label, fontWeight = FontWeight.Medium)
-                    Text(text = value , textAlign = TextAlign.Start)
+                    Text(text = value, textAlign = TextAlign.Start)
                 }
             }
         }
